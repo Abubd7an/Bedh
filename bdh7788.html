@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>إنسان حيوان نبات جماد بلاد</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#07070f;--s1:#0f0f1c;--s2:#161628;--s3:#1e1e35;
+  --b:#252545;--gold:#f6c90e;--gold2:#d4a20a;
+  --pink:#f0547a;--teal:#3dd6b0;
+  --red:#f05050;--green:#3dda80;--blue:#4fa0f8;
+  --txt:#e8e8fa;--muted:#686898;
+}
+body{background:var(--bg);color:var(--txt);font-family:'Tajawal',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(246,201,14,.08),transparent 70%);
+  pointer-events:none;z-index:0}
+#root{position:relative;z-index:1;max-width:520px;margin:0 auto}
+.scr{display:none;min-height:100vh;padding:18px 14px 80px}
+.scr.on{display:block}
+.logo{text-align:center;padding:26px 0 16px}
+.logo .ico{font-size:2.8rem;display:block;margin-bottom:6px}
+.logo h1{font-size:1.7rem;font-weight:900;
+  background:linear-gradient(130deg,var(--gold),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+.logo small{color:var(--muted);font-size:.8rem;display:block;margin-top:5px}
+.card{background:var(--s2);border:1px solid var(--b);border-radius:20px;padding:18px;margin-bottom:13px}
+.ctitle{font-size:.88rem;font-weight:800;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+input[type=text],input[type=number]{width:100%;background:var(--s1);border:1.5px solid var(--b);
+  border-radius:12px;padding:13px 15px;color:var(--txt);
+  font-family:'Tajawal',sans-serif;font-size:1rem;outline:none;
+  transition:border-color .2s;margin-bottom:10px;direction:rtl}
+input:focus{border-color:var(--gold)}
+input::placeholder{color:var(--muted)}
+input:disabled{opacity:.4;cursor:not-allowed}
+.btn{display:block;width:100%;padding:14px;border-radius:14px;border:none;
+  font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:800;
+  cursor:pointer;transition:transform .1s,filter .15s;margin-bottom:9px;text-align:center}
+.btn:active{transform:scale(.97);filter:brightness(.85)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#111}
+.btn-pink{background:linear-gradient(135deg,var(--pink),#b02050);color:#fff}
+.btn-teal{background:linear-gradient(135deg,var(--teal),#1a9070);color:#111}
+.btn-outline{background:transparent;border:2px solid var(--b);color:var(--txt)}
+.ptag{display:flex;align-items:center;gap:9px;background:var(--s1);border:1px solid var(--b);
+  border-radius:12px;padding:11px 14px;margin-bottom:7px}
+.ptag .av{font-size:1.3rem}.ptag .pn{flex:1;font-weight:700;font-size:.92rem}
+.badge{font-size:.68rem;padding:3px 9px;border-radius:20px;font-weight:800}
+.bh{background:rgba(246,201,14,.15);color:var(--gold)}
+.bm{background:rgba(79,160,248,.15);color:var(--blue)}
+.br{background:rgba(61,218,128,.15);color:var(--green)}
+.codebox{background:rgba(246,201,14,.07);border:2px dashed rgba(246,201,14,.38);
+  border-radius:16px;padding:18px;text-align:center;margin-bottom:13px}
+.codebox .ct{font-size:3.2rem;font-weight:900;color:var(--gold);letter-spacing:14px;line-height:1}
+.codebox p{color:var(--muted);font-size:.76rem;margin-top:5px}
+.srow{display:flex;justify-content:space-between;align-items:center;padding:7px 0}
+.sbtns{display:flex;align-items:center;gap:12px}
+.adj{background:var(--b);border:none;color:var(--txt);width:32px;height:32px;
+  border-radius:8px;font-size:1.1rem;cursor:pointer;font-family:'Tajawal',sans-serif}
+.sval{font-weight:900;color:var(--gold);font-size:1.1rem;min-width:28px;text-align:center}
+.lbig{width:100px;height:100px;margin:10px auto;border-radius:22px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:4rem;font-weight:900;
+  background:linear-gradient(135deg,var(--gold),var(--pink));color:#111;
+  box-shadow:0 0 45px rgba(246,201,14,.38);
+  animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(.15);opacity:0}to{transform:scale(1);opacity:1}}
+.rbadge{display:inline-block;background:rgba(246,201,14,.1);
+  border:1px solid rgba(246,201,14,.28);border-radius:30px;
+  padding:5px 16px;color:var(--gold);font-size:.78rem;font-weight:800}
+.rheader{text-align:center;margin-bottom:12px}
+.afield{background:var(--s1);border:1.5px solid var(--b);border-radius:14px;
+  padding:13px 15px;margin-bottom:9px}
+.afield label{display:flex;align-items:center;gap:7px;color:var(--muted);
+  font-size:.82rem;font-weight:800;margin-bottom:6px}
+.afield input{margin-bottom:0;background:transparent;border:none;
+  border-bottom:1.5px solid var(--b);border-radius:0;padding:6px 2px;font-size:1rem}
+.afield input:focus{border-bottom-color:var(--gold)}
+#stopBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:90;
+  background:linear-gradient(135deg,var(--red),#900);
+  padding:14px;text-align:center;font-weight:900;font-size:1rem;color:#fff;
+  animation:slideD .3s ease;box-shadow:0 4px 20px rgba(240,80,80,.4)}
+@keyframes slideD{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.stbl{width:100%;border-collapse:collapse;font-size:.86rem}
+.stbl th{background:var(--s1);color:var(--gold);font-weight:800;padding:9px 7px;
+  border-bottom:1px solid var(--b);text-align:center}
+.stbl th:first-child{text-align:right}
+.stbl td{padding:9px 7px;border-bottom:1px solid var(--b);text-align:center;vertical-align:middle}
+.stbl td:first-child{text-align:right;font-size:.8rem;color:var(--muted);font-weight:700}
+.stbl tr:last-child td{border-bottom:none}
+.pts-input{width:50px;background:var(--s1);border:1.5px solid var(--b);border-radius:8px;
+  padding:5px 3px;color:var(--txt);font-family:'Tajawal',sans-serif;
+  font-weight:900;font-size:.95rem;text-align:center;outline:none;margin-bottom:0}
+.pts-input:focus{border-color:var(--gold)}
+.qbts{display:flex;gap:4px;justify-content:center;margin-top:4px;flex-wrap:wrap}
+.qbts button{background:var(--s3);border:1px solid var(--b);border-radius:6px;
+  color:var(--txt);font-family:'Tajawal',sans-serif;font-size:.75rem;
+  padding:3px 8px;cursor:pointer;font-weight:800;transition:.1s}
+.qbts button:hover,.qbts button:active{background:var(--gold);color:#111;border-color:var(--gold)}
+.lbrow{display:flex;align-items:center;gap:11px;background:var(--s2);border:1px solid var(--b);
+  border-radius:14px;padding:13px 15px;margin-bottom:9px}
+.lbrow.top{border-color:var(--gold);background:rgba(246,201,14,.05)}
+.lbrank{font-size:1.4rem;width:34px;text-align:center}
+.lbname{flex:1;font-weight:800}
+.lbpts{font-size:1.45rem;font-weight:900;color:var(--gold)}
+.lbpts small{font-size:.65rem;color:var(--muted)}
+.delta{font-size:.72rem;color:var(--green);font-weight:700;margin-top:2px}
+.rule-row{display:flex;align-items:center;gap:8px;font-size:.84rem;margin-bottom:7px}
+.rule-badge{padding:3px 10px;border-radius:8px;font-weight:800;font-size:.82rem;flex-shrink:0}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(120px);
+  background:var(--s2);border:1px solid var(--b);border-radius:30px;padding:10px 22px;
+  font-size:.88rem;font-weight:700;z-index:999;transition:transform .3s;
+  white-space:nowrap;max-width:90vw;text-align:center}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#ov{display:none;position:fixed;inset:0;background:rgba(7,7,15,.94);z-index:200;
+  align-items:center;justify-content:center;flex-direction:column;gap:14px}
+#ov.on{display:flex}
+.spin{width:46px;height:46px;border:4px solid var(--b);border-top-color:var(--gold);
+  border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+#ovMsg{color:var(--muted);font-size:.88rem}
+</style>
+</head>
+<body>
+<div id="root">
+
+<!-- HOME -->
+<div id="s-home" class="scr on">
+  <div class="logo">
+    <span class="ico">🎯</span>
+    <h1>إنسان · حيوان<br>نبات · جماد · بلاد</h1>
+    <small>اللعبة الكلاسيكية — العب مع أصدقائك</small>
+  </div>
+  <div class="card">
+    <div class="ctitle">✏️ اسمك في اللعبة</div>
+    <input type="text" id="myName" placeholder="اكتب اسمك..." maxlength="16">
+  </div>
+  <div class="card">
+    <div class="ctitle">🏠 أنشئ غرفة جديدة</div>
+    <p style="color:var(--muted);font-size:.82rem;margin-bottom:11px">ستكون المضيف وتتحكم بالنقاط</p>
+    <button class="btn btn-gold" onclick="createRoom()">🚀 إنشاء غرفة</button>
+  </div>
+  <div class="card">
+    <div class="ctitle">🚪 انضم لغرفة</div>
+    <input type="text" id="joinCode" placeholder="اكتب الكود (4 أرقام)" maxlength="6"
+      style="text-align:center;font-size:1.5rem;letter-spacing:10px;font-weight:900">
+    <button class="btn btn-pink" onclick="joinRoom()">انضم الآن</button>
+  </div>
+</div>
+
+<!-- LOBBY -->
+<div id="s-lobby" class="scr">
+  <div class="logo"><span class="ico">🏠</span><h1>غرفة الانتظار</h1></div>
+  <div class="card">
+    <div class="ctitle">📋 شارك هذا الكود</div>
+    <div class="codebox">
+      <div class="ct" id="lobbyCode">----</div>
+      <p>كل لاعب يفتح اللعبة ويكتب هذا الكود</p>
+    </div>
+    <button class="btn btn-outline" style="font-size:.88rem" onclick="copyCode()">📋 نسخ الكود</button>
+  </div>
+  <div class="card">
+    <div class="ctitle">👥 اللاعبون (<span id="lobbyCount">1</span>)</div>
+    <div id="lobbyList"></div>
+  </div>
+  <div class="card">
+    <div class="ctitle">⚙️ إعدادات</div>
+    <div class="srow">
+      <span>عدد الجولات</span>
+      <div class="sbtns">
+        <button class="adj" onclick="adj(-1)">−</button>
+        <span class="sval" id="vr">5</span>
+        <button class="adj" onclick="adj(1)">+</button>
+      </div>
+    </div>
+  </div>
+  <button class="btn btn-teal" onclick="hostStart()">▶️ ابدأ اللعبة</button>
+</div>
+
+<!-- WAITING -->
+<div id="s-waiting" class="scr">
+  <div class="logo"><span class="ico">⏳</span><h1>في الانتظار</h1><small>انتظر حتى يبدأ المضيف</small></div>
+  <div class="card" style="text-align:center">
+    <div style="font-size:2.5rem;margin:10px 0">✅</div>
+    <p style="font-weight:800;font-size:1.05rem">انضممت بنجاح!</p>
+    <p style="color:var(--muted);font-size:.82rem;margin-top:5px">المضيف سيبدأ قريباً...</p>
+  </div>
+  <div class="card"><div class="ctitle">👥 في الغرفة</div><div id="waitList"></div></div>
+</div>
+
+<!-- GAME -->
+<div id="s-game" class="scr">
+  <div class="rheader"><span class="rbadge" id="roundBadge">الجولة 1 / 5</span></div>
+  <div style="text-align:center">
+    <p style="color:var(--muted);font-size:.78rem;margin-bottom:2px">الحرف هذه الجولة</p>
+    <div class="lbig" id="bigLetter">أ</div>
+  </div>
+  <div id="gameFields"></div>
+  <button class="btn btn-gold" id="btnStop" onclick="iFinished()">🏁 انتهيت! أوقف الجميع</button>
+  <div id="gameStatus" style="display:none;text-align:center;padding:16px;color:var(--muted);font-size:.88rem"></div>
+</div>
+
+<!-- SCORING WAIT -->
+<div id="s-scorewait" class="scr">
+  <div class="logo"><span class="ico">📊</span><h1>حساب النقاط</h1></div>
+  <div class="card" style="text-align:center">
+    <div style="font-size:2.5rem;margin:10px 0">⏳</div>
+    <p style="font-weight:800">المضيف يحسب النقاط...</p>
+  </div>
+  <div id="answersPreview"></div>
+</div>
+
+<!-- SCORING HOST -->
+<div id="s-scoring" class="scr">
+  <div class="logo"><span class="ico">📝</span><h1>لوحة النقاط</h1></div>
+  <div class="card" style="background:var(--s3)">
+    <div class="ctitle">📖 قواعد النقاط</div>
+    <div class="rule-row">
+      <span class="rule-badge" style="background:rgba(61,218,128,.15);color:var(--green)">10</span>
+      كلمة صحيحة ولم يكتبها أحد غيرك
+    </div>
+    <div class="rule-row">
+      <span class="rule-badge" style="background:rgba(246,201,14,.15);color:var(--gold)">5</span>
+      كلمة صحيحة لكن كتبها لاعب آخر أيضاً
+    </div>
+    <div class="rule-row" style="margin-bottom:0">
+      <span class="rule-badge" style="background:rgba(240,80,80,.15);color:var(--red)">0</span>
+      لم يكتب شيء أو الكلمة خاطئة
+    </div>
+  </div>
+  <div id="scoringCards"></div>
+  <button class="btn btn-teal" onclick="confirmScores()">✅ تأكيد النقاط وعرض النتائج</button>
+</div>
+
+<!-- RESULTS -->
+<div id="s-results" class="scr">
+  <div class="logo"><span class="ico">🏆</span><h1>نتائج الجولة <span id="resRound"></span></h1></div>
+  <div id="lbRound"></div>
+  <button class="btn btn-gold" id="btnNext" style="display:none">▶️ الجولة التالية</button>
+  <button class="btn btn-outline" onclick="backHome()" style="margin-top:4px">🏠 الرئيسية</button>
+</div>
+
+<!-- FINAL -->
+<div id="s-final" class="scr">
+  <div class="logo"><span class="ico">🥇</span><h1>انتهت اللعبة!</h1><small>النتائج النهائية</small></div>
+  <div id="lbFinal"></div>
+  <button class="btn btn-gold" onclick="backHome()">🔄 لعبة جديدة</button>
+</div>
+
+</div>
+<div id="stopBanner">🛑 <span id="stopName"></span> انتهى! أقلام بره! 🚫</div>
+<div id="ov"><div class="spin"></div><p id="ovMsg">جاري الاتصال...</p></div>
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+// DB = kvdb.io — مجاني بدون تسجيل
+// كل غرفة = key في قاعدة بيانات مجانية
+// ══════════════════════════════════════
+// نستخدم bucket مخصص للعبة
+const BUCKET = 'UHBjyYH6SB5c4TFfx3Q7Wk'; // bucket مجاني مخصص للعبة
+const DB_URL = `https://kvdb.io/${BUCKET}`;
+
+async function dbSet(key, val){
+  await fetch(`${DB_URL}/${key}`,{
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(val)
+  });
+}
+async function dbGet(key){
+  try{
+    const r=await fetch(`${DB_URL}/${key}`);
+    if(r.status===404) return null;
+    return await r.json();
+  }catch(e){return null;}
+}
+async function dbDel(key){ fetch(`${DB_URL}/${key}`,{method:'DELETE'}); }
+
+// ══════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════
+const CATS=[
+  {k:'human', i:'🧑',n:'إنسان'},
+  {k:'animal',i:'🐾',n:'حيوان'},
+  {k:'plant', i:'🌿',n:'نبات'},
+  {k:'object',i:'🪨',n:'جماد'},
+  {k:'country',i:'🌍',n:'بلاد'},
+];
+const LETTERS=['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ع','غ','ف','ق','ك','ل','م','ن','ه','و','ي'];
+const AVTR=['⭐','🔵','🟢','🟡','🟣','🔴','🟤','⚪'];
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let G={
+  myName:'',myId:'',isHost:false,code:'',
+  players:[],settings:{rounds:5},
+  round:0,letter:'',usedLetters:[],
+  allAnswers:{},scores:{},roundPts:{},
+  finished:false,pollTimer:null,lastStatus:'',
+};
+
+// ══════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$('s-'+id).classList.add('on');window.scrollTo(0,0);}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),3000);}
+function ov(on,msg){$('ov').classList.toggle('on',on);if(msg)$('ovMsg').textContent=msg;}
+function genCode(){return String(Math.floor(1000+Math.random()*8999));}
+function pickLetter(){const pool=LETTERS.filter(l=>!G.usedLetters.includes(l));const p=pool.length?pool:LETTERS;const l=p[Math.floor(Math.random()*p.length)];G.usedLetters.push(l);return l;}
+
+// ══════════════════════════════════════
+// POLLING — يتحقق من قاعدة البيانات كل ثانية
+// ══════════════════════════════════════
+function startPolling(){
+  stopPolling();
+  G.pollTimer=setInterval(pollRoom,1200);
+}
+function stopPolling(){ clearInterval(G.pollTimer); }
+
+async function pollRoom(){
+  const room=await dbGet('room_'+G.code);
+  if(!room) return;
+  G.players=room.players||[];
+  G.settings=room.settings||G.settings;
+
+  const st=room.status;
+  if(st===G.lastStatus){
+    // Still same status — just update player list if in lobby/waiting
+    if(st==='lobby'){ renderLobbyList(); renderWaitList(); }
+    return;
+  }
+  G.lastStatus=st;
+
+  if(st==='playing'){
+    G.round=room.round;
+    G.letter=room.letter;
+    G.usedLetters=room.usedLetters||[];
+    G.allAnswers={};
+    G.finished=false;
+    beginRound();
+  }
+  if(st==='stopped'){
+    showStopBanner(room.stoppedBy||'لاعب');
+    lockFields();
+    saveMyAnswers();
+    if(G.isHost) setTimeout(goToScoring,2500);
+  }
+  if(st==='scoring'){
+    G.allAnswers=room.allAnswers||{};
+    if(G.isHost){ buildScoringTable(); show('scoring'); }
+    else { showAnswersPreview(); show('scorewait'); }
+  }
+  if(st==='results'){
+    G.scores=room.scores||{};
+    G.roundPts=room.roundPts||{};
+    G.round=room.round;
+    showResults(room.isLast);
+  }
+  if(st==='final'){
+    G.scores=room.scores||{};
+    G.roundPts=room.roundPts||{};
+    showFinal();
+  }
+}
+
+// ══════════════════════════════════════
+// CREATE & JOIN
+// ══════════════════════════════════════
+window.createRoom=async function(){
+  const name=$('myName').value.trim();
+  if(!name){toast('✏️ اكتب اسمك أولاً');return;}
+  ov(true,'جاري إنشاء الغرفة...');
+
+  G.myName=name;G.isHost=true;
+  G.myId='h_'+Date.now();
+  G.code=genCode();
+  G.players=[{id:G.myId,name,isHost:true}];
+  G.scores={[G.myId]:0};
+  G.usedLetters=[];G.round=0;G.lastStatus='lobby';
+
+  const room={
+    host:G.myId,
+    settings:G.settings,
+    status:'lobby',
+    players:G.players,
+    round:0,letter:'',usedLetters:[],
+    allAnswers:{},scores:{},roundPts:{},
+    stoppedBy:'',isLast:false,
+    ts:Date.now()
+  };
+
+  try{
+    await dbSet('room_'+G.code,room);
+    ov(false);
+    $('lobbyCode').textContent=G.code;
+    renderLobbyList();
+    startPolling();
+    show('lobby');
+  }catch(e){
+    ov(false);
+    toast('❌ فشل الاتصال بالإنترنت — تحقق من الاتصال');
+  }
+};
+
+window.joinRoom=async function(){
+  const name=$('myName').value.trim();
+  const code=$('joinCode').value.trim().replace(/\D/g,'');
+  if(!name){toast('✏️ اكتب اسمك أولاً');return;}
+  if(code.length<4){toast('🔑 الكود 4 أرقام');return;}
+  ov(true,'جاري الانضمام...');
+
+  G.myName=name;G.myId='p_'+Date.now();
+  G.isHost=false;G.code=code;G.lastStatus='';
+
+  const room=await dbGet('room_'+code);
+  if(!room){ov(false);toast('❌ الغرفة غير موجودة');return;}
+  if(room.status!=='lobby'){ov(false);toast('⚠️ اللعبة بدأت بالفعل');return;}
+
+  G.settings=room.settings;
+  G.players=[...room.players,{id:G.myId,name,isHost:false}];
+
+  await dbSet('room_'+code,{...room,players:G.players});
+  ov(false);
+  renderWaitList();
+  startPolling();
+  show('waiting');
+};
+
+// ══════════════════════════════════════
+// LOBBY
+// ══════════════════════════════════════
+function renderLobbyList(){
+  $('lobbyCount').textContent=G.players.length;
+  $('lobbyList').innerHTML=G.players.map((p,i)=>`
+    <div class="ptag">
+      <span class="av">${AVTR[i]||'👤'}</span>
+      <span class="pn">${p.name}</span>
+      ${p.isHost?'<span class="badge bh">مضيف</span>':p.id===G.myId?'<span class="badge bm">أنت</span>':'<span class="badge br">✅</span>'}
+    </div>`).join('');
+}
+function renderWaitList(){
+  $('waitList').innerHTML=G.players.map((p,i)=>`
+    <div class="ptag">
+      <span class="av">${AVTR[i]||'👤'}</span>
+      <span class="pn">${p.name}</span>
+      ${p.isHost?'<span class="badge bh">مضيف</span>':p.id===G.myId?'<span class="badge bm">أنت</span>':''}
+    </div>`).join('');
+}
+
+window.adj=function(d){
+  G.settings.rounds=Math.max(1,Math.min(10,G.settings.rounds+d));
+  $('vr').textContent=G.settings.rounds;
+};
+window.copyCode=function(){
+  navigator.clipboard.writeText(G.code).then(()=>toast('✅ تم نسخ الكود!'));
+};
+
+window.hostStart=async function(){
+  G.round=1;G.usedLetters=[];G.letter=pickLetter();
+  G.allAnswers={};G.finished=false;
+  const scores={};G.players.forEach(p=>scores[p.id]=0);G.scores=scores;
+
+  const room=await dbGet('room_'+G.code);
+  await dbSet('room_'+G.code,{...room,
+    status:'playing',round:G.round,letter:G.letter,
+    usedLetters:G.usedLetters,scores,allAnswers:{},
+    settings:G.settings,players:G.players,
+    stoppedBy:'',isLast:false
+  });
+  G.lastStatus='playing';
+  beginRound();
+};
+
+// ══════════════════════════════════════
+// GAME
+// ══════════════════════════════════════
+function beginRound(){
+  G.finished=false;
+  $('stopBanner').style.display='none';
+  $('roundBadge').textContent=`الجولة ${G.round} / ${G.settings.rounds}`;
+  $('bigLetter').textContent=G.letter;
+  $('gameFields').innerHTML=CATS.map(c=>`
+    <div class="afield">
+      <label><span>${c.i}</span><span>${c.n}</span></label>
+      <input type="text" id="f_${c.k}" placeholder="${c.n} بحرف ${G.letter}..." maxlength="30">
+    </div>`).join('');
+  $('btnStop').style.display='block';
+  $('btnStop').disabled=false;
+  $('gameStatus').style.display='none';
+  show('game');
+}
+
+window.iFinished=async function(){
+  if(G.finished)return;
+  G.finished=true;
+  lockFields();
+  $('btnStop').style.display='none';
+  $('gameStatus').style.display='block';
+  $('gameStatus').textContent='✅ انتهيت — جاري إيقاف الجميع...';
+
+  const room=await dbGet('room_'+G.code);
+  const ans={};
+  CATS.forEach(c=>{const el=$('f_'+c.k);ans[c.k]=el?el.value.trim():'';});
+  const allAnswers={...(room.allAnswers||{}),[G.myId]:ans};
+
+  await dbSet('room_'+G.code,{...room,
+    status:'stopped',stoppedBy:G.myName,allAnswers
+  });
+  G.lastStatus='stopped';
+  showStopBanner(G.myName);
+  if(G.isHost) setTimeout(goToScoring,2500);
+};
+
+async function saveMyAnswers(){
+  if(G.allAnswers[G.myId]) return; // already saved
+  const ans={};
+  CATS.forEach(c=>{const el=$('f_'+c.k);ans[c.k]=el?el.value.trim():'';});
+  G.allAnswers[G.myId]=ans;
+  const room=await dbGet('room_'+G.code);
+  if(!room) return;
+  const allAnswers={...(room.allAnswers||{}),[G.myId]:ans};
+  await dbSet('room_'+G.code,{...room,allAnswers});
+}
+
+async function goToScoring(){
+  const room=await dbGet('room_'+G.code);
+  // Fill missing answers
+  const allAnswers={...(room.allAnswers||{})};
+  G.players.forEach(p=>{if(!allAnswers[p.id]) allAnswers[p.id]={};});
+  G.allAnswers=allAnswers;
+  await dbSet('room_'+G.code,{...room,status:'scoring',allAnswers});
+  G.lastStatus='scoring';
+  buildScoringTable();
+  show('scoring');
+}
+
+function lockFields(){
+  CATS.forEach(c=>{const el=$('f_'+c.k);if(el)el.disabled=true;});
+  const btn=$('btnStop');if(btn){btn.disabled=true;}
+}
+function showStopBanner(name){
+  $('stopName').textContent=name;
+  $('stopBanner').style.display='block';
+  if(navigator.vibrate) navigator.vibrate([200,100,200]);
+}
+
+// ══════════════════════════════════════
+// ANSWERS PREVIEW
+// ══════════════════════════════════════
+function showAnswersPreview(){
+  $('answersPreview').innerHTML=G.players.map((p,pi)=>{
+    const ans=G.allAnswers[p.id]||{};
+    return `<div class="card">
+      <div class="ctitle">${AVTR[pi]||'👤'} ${p.name}</div>
+      ${CATS.map(c=>`
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--b);font-size:.88rem">
+          <span style="color:var(--muted)">${c.i} ${c.n}</span>
+          <span style="font-weight:700">${ans[c.k]||'<span style="color:var(--muted)">—</span>'}</span>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+// SCORING TABLE
+// ══════════════════════════════════════
+function buildScoringTable(){
+  $('scoringCards').innerHTML=G.players.map((p,pi)=>{
+    const ans=G.allAnswers[p.id]||{};
+    const rows=CATS.map(c=>{
+      const val=(ans[c.k]||'').trim();
+      const dup=val!==''&&G.players.some(op=>
+        op.id!==p.id&&((G.allAnswers[op.id]||{})[c.k]||'').trim().toLowerCase()===val.toLowerCase()
+      );
+      const sug=val===''?0:dup?5:10;
+      return `<tr>
+        <td>${c.i} ${c.n}</td>
+        <td style="font-weight:700;color:${val?'var(--txt)':'var(--muted)'}">${val||'—'}</td>
+        <td>
+          <input class="pts-input" type="number" min="0" max="10" step="5"
+            id="pts_${p.id}_${c.k}" value="${sug}">
+          <div class="qbts">
+            <button onclick="sp('${p.id}','${c.k}',10)">10</button>
+            <button onclick="sp('${p.id}','${c.k}',5)">5</button>
+            <button onclick="sp('${p.id}','${c.k}',0)">0</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+    return `<div class="card" style="padding:14px">
+      <div class="ctitle">${AVTR[pi]||'👤'} ${p.name}${p.id===G.myId?' <span style="font-size:.7rem;color:var(--gold)">(أنت)</span>':''}</div>
+      <table class="stbl">
+        <thead><tr><th>الخانة</th><th>الإجابة</th><th>النقاط</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+window.sp=function(pid,cat,val){const el=$(`pts_${pid}_${cat}`);if(el)el.value=val;};
+
+window.confirmScores=async function(){
+  G.roundPts={};
+  G.players.forEach(p=>{
+    let t=0;
+    CATS.forEach(c=>{const el=$(`pts_${p.id}_${c.k}`);t+=el?Math.max(0,parseInt(el.value)||0):0;});
+    G.roundPts[p.id]=t;
+    G.scores[p.id]=(G.scores[p.id]||0)+t;
+  });
+  const isLast=G.round>=G.settings.rounds;
+  const room=await dbGet('room_'+G.code);
+  await dbSet('room_'+G.code,{...room,
+    status:isLast?'final':'results',
+    scores:G.scores,roundPts:G.roundPts,
+    round:G.round,isLast
+  });
+  G.lastStatus=isLast?'final':'results';
+  if(isLast) showFinal(); else showResults(false);
+};
+
+// ══════════════════════════════════════
+// RESULTS
+// ══════════════════════════════════════
+function showResults(isLast){
+  $('resRound').textContent=G.round;
+  const sorted=[...G.players].sort((a,b)=>(G.scores[b.id]||0)-(G.scores[a.id]||0));
+  const medals=['🥇','🥈','🥉'];
+  $('lbRound').innerHTML=sorted.map((p,i)=>`
+    <div class="lbrow ${i===0?'top':''}">
+      <div class="lbrank">${medals[i]||(i+1)}</div>
+      <div class="lbname">${p.name}${p.id===G.myId?' <span style="font-size:.7rem;color:var(--muted)">(أنت)</span>':''}
+        <div class="delta">+${G.roundPts[p.id]||0} هذه الجولة</div>
+      </div>
+      <div class="lbpts">${G.scores[p.id]||0}<small> نقطة</small></div>
+    </div>`).join('');
+  const btn=$('btnNext');
+  if(isLast){btn.textContent='🏆 النتائج النهائية';btn.onclick=showFinal;btn.style.display='block';}
+  else if(G.isHost){btn.textContent='▶️ الجولة التالية';btn.onclick=hostNextRound;btn.style.display='block';}
+  else btn.style.display='none';
+  show('results');
+}
+
+async function hostNextRound(){
+  G.round++;G.letter=pickLetter();G.allAnswers={};G.finished=false;
+  const room=await dbGet('room_'+G.code);
+  await dbSet('room_'+G.code,{...room,
+    status:'playing',round:G.round,letter:G.letter,
+    usedLetters:G.usedLetters,allAnswers:{},stoppedBy:''
+  });
+  G.lastStatus='playing';
+  beginRound();
+}
+
+function showFinal(){
+  const sorted=[...G.players].sort((a,b)=>(G.scores[b.id]||0)-(G.scores[a.id]||0));
+  const medals=['🥇','🥈','🥉'];
+  $('lbFinal').innerHTML=sorted.map((p,i)=>`
+    <div class="lbrow ${i===0?'top':''}">
+      <div class="lbrank">${medals[i]||(i+1)}</div>
+      <div class="lbname">${p.name}${p.id===G.myId?' <span style="font-size:.7rem;color:var(--muted)">(أنت)</span>':''}</div>
+      <div class="lbpts">${G.scores[p.id]||0}<small> نقطة</small></div>
+    </div>`).join('');
+  stopPolling();
+  show('final');
+}
+
+window.backHome=function(){
+  stopPolling();
+  if(G.isHost&&G.code) dbDel('room_'+G.code);
+  G={myName:'',myId:'',isHost:false,code:'',players:[],settings:{rounds:5},
+    round:0,letter:'',usedLetters:[],allAnswers:{},scores:{},roundPts:{},
+    finished:false,pollTimer:null,lastStatus:''};
+  $('stopBanner').style.display='none';
+  $('joinCode').value='';$('myName').value='';
+  show('home');
+};
+</script>
+</body>
+</html>
