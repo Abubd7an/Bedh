@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Construction Risk Assessment Scenarios</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --yellow: #F5C800;
+  --orange: #E8621A;
+  --dark: #0D0D0D;
+  --dark2: #171717;
+  --dark3: #222;
+  --steel: #333;
+  --light: #E8E4DC;
+  --muted: #777;
+  --green: #27AE60;
+  --red: #C0392B;
+  --blue: #2980B9;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--dark); color:var(--light); font-family:'Rajdhani',sans-serif; }
+
+/* HEADER */
+.header {
+  background:var(--dark2);
+  border-bottom:3px solid var(--yellow);
+  padding:16px 20px;
+  display:flex; align-items:center; gap:14px;
+  position:sticky; top:0; z-index:200;
+}
+.header h1 { font-family:'Bebas Neue',cursive; font-size:20px; letter-spacing:2px; color:var(--yellow); }
+.header p { font-size:11px; color:var(--muted); letter-spacing:1px; }
+.count-badge { margin-left:auto; background:var(--orange); color:#fff; font-family:'IBM Plex Mono',monospace; font-size:10px; padding:4px 10px; border-radius:2px; }
+
+/* LEGEND */
+.legend {
+  display:flex; gap:10px; flex-wrap:wrap;
+  padding:12px 20px;
+  background:var(--dark2);
+  border-bottom:1px solid var(--steel);
+  font-size:11px;
+}
+.leg { display:flex; align-items:center; gap:5px; }
+.leg-dot { width:10px; height:10px; border-radius:50%; }
+.leg-high { background:var(--red); }
+.leg-med { background:var(--orange); }
+.leg-low { background:var(--green); }
+
+/* FILTER BAR */
+.filter-bar {
+  display:flex; gap:8px; flex-wrap:wrap;
+  padding:12px 20px;
+  background:var(--dark2);
+  border-bottom:1px solid var(--steel);
+  overflow-x:auto;
+}
+.filter-btn {
+  background:var(--dark3); border:1px solid var(--steel);
+  color:var(--muted); font-family:'Rajdhani',sans-serif;
+  font-size:12px; font-weight:600; letter-spacing:1px;
+  padding:6px 14px; cursor:pointer; border-radius:2px;
+  white-space:nowrap; transition:all .2s; text-transform:uppercase;
+}
+.filter-btn:hover, .filter-btn.active { background:var(--yellow); color:var(--dark); border-color:var(--yellow); }
+
+/* GRID */
+.grid { padding:20px; display:grid; gap:16px; }
+
+/* SCENARIO CARD */
+.card {
+  background:var(--dark2);
+  border:1px solid var(--steel);
+  border-radius:2px;
+  overflow:hidden;
+  transition:transform .2s;
+}
+.card:hover { transform:translateY(-2px); }
+
+.card-header {
+  display:flex; align-items:center; gap:12px;
+  padding:14px 16px;
+  cursor:pointer;
+  background:var(--dark3);
+  border-bottom:1px solid var(--steel);
+  user-select:none;
+}
+.card-icon { font-size:22px; flex-shrink:0; }
+.card-title-wrap { flex:1; }
+.card-title { font-family:'Bebas Neue',cursive; font-size:18px; letter-spacing:1px; color:white; line-height:1; }
+.card-title-ar { font-size:12px; color:var(--muted); margin-top:2px; direction:rtl; }
+.card-meta { display:flex; gap:6px; align-items:center; flex-shrink:0; }
+
+.risk-badge {
+  font-family:'IBM Plex Mono',monospace; font-size:10px;
+  font-weight:600; padding:3px 8px; border-radius:2px;
+  text-transform:uppercase; letter-spacing:1px;
+}
+.risk-high { background:rgba(192,57,43,0.2); color:var(--red); border:1px solid var(--red); }
+.risk-med  { background:rgba(232,98,26,0.2); color:var(--orange); border:1px solid var(--orange); }
+.risk-low  { background:rgba(39,174,96,0.2); color:var(--green); border:1px solid var(--green); }
+
+.chevron { color:var(--muted); font-size:14px; transition:transform .3s; }
+.card.open .chevron { transform:rotate(180deg); }
+
+/* RA TABLE */
+.ra-body { display:none; padding:16px; }
+.card.open .ra-body { display:block; animation:fadeIn .25s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+.ra-table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:14px; }
+.ra-table th {
+  background:var(--dark3); color:var(--yellow);
+  font-family:'IBM Plex Mono',monospace; font-size:10px;
+  letter-spacing:1px; text-transform:uppercase;
+  padding:8px 10px; text-align:left; border-bottom:2px solid var(--yellow);
+}
+.ra-table td {
+  padding:10px 10px; border-bottom:1px solid var(--steel);
+  vertical-align:top; line-height:1.6; color:#ccc;
+}
+.ra-table tr:last-child td { border-bottom:none; }
+.ra-table .field-label {
+  color:var(--yellow); font-weight:700; font-size:12px;
+  letter-spacing:.5px; white-space:nowrap; width:160px;
+}
+
+.controls-list { list-style:none; }
+.controls-list li { padding:3px 0; display:flex; gap:8px; }
+.controls-list li::before { content:'▸'; color:var(--orange); flex-shrink:0; }
+
+.residual-row { background:rgba(39,174,96,0.05); }
+.residual-row td { color:var(--green); }
+
+/* CAT TAG */
+.cat-tag {
+  font-size:9px; font-weight:700; letter-spacing:1px;
+  padding:2px 7px; border-radius:1px; text-transform:uppercase;
+}
+.cat-height { background:rgba(192,57,43,.2); color:var(--red); }
+.cat-excavation { background:rgba(232,98,26,.2); color:var(--orange); }
+.cat-electrical { background:rgba(245,200,0,.15); color:var(--yellow); }
+.cat-manual { background:rgba(41,128,185,.2); color:var(--blue); }
+.cat-fire { background:rgba(192,57,43,.2); color:#e74c3c; }
+.cat-environment { background:rgba(39,174,96,.2); color:var(--green); }
+.cat-plant { background:rgba(155,89,182,.2); color:#9b59b6; }
+.cat-health { background:rgba(26,188,156,.2); color:#1abc9c; }
+
+@media(max-width:480px){
+  .ra-table { font-size:12px; }
+  .field-label { width:120px !important; }
+  .header h1 { font-size:16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>⚠️ Construction Risk Assessment</h1>
+    <p>COMMON HAZARD SCENARIOS — سيناريوهات الخطر الشائعة</p>
+  </div>
+  <div class="count-badge">12 HAZARDS</div>
+</div>
+
+<div class="legend">
+  <div class="leg"><div class="leg-dot leg-high"></div><span>High Risk — خطر عالٍ</span></div>
+  <div class="leg"><div class="leg-dot leg-med"></div><span>Medium Risk — خطر متوسط</span></div>
+  <div class="leg"><div class="leg-dot leg-low"></div><span>Low Risk — خطر منخفض</span></div>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterCards('all',this)">All</button>
+  <button class="filter-btn" onclick="filterCards('height',this)">Height</button>
+  <button class="filter-btn" onclick="filterCards('excavation',this)">Excavation</button>
+  <button class="filter-btn" onclick="filterCards('electrical',this)">Electrical</button>
+  <button class="filter-btn" onclick="filterCards('manual',this)">Manual Handling</button>
+  <button class="filter-btn" onclick="filterCards('fire',this)">Fire</button>
+  <button class="filter-btn" onclick="filterCards('environment',this)">Environment</button>
+  <button class="filter-btn" onclick="filterCards('plant',this)">Plant & Machinery</button>
+  <button class="filter-btn" onclick="filterCards('health',this)">Health</button>
+</div>
+
+<div class="grid" id="cards-grid">
+
+<!-- =============================== CARD 1 =============================== -->
+<div class="card" data-cat="height" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">🪜</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Working at Height</div>
+      <div class="card-title-ar">العمل على ارتفاع</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-height">Height</span>
+      <span class="risk-badge risk-high">HIGH</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Working at height on scaffolding, ladders, or leading edges above 2 metres.</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>Workers on the scaffold, operatives below, members of the public nearby.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Workers may fall from height causing serious injury or death. Tools or materials may fall and strike people below.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>Scaffold erected and inspected by competent person weekly</li><li>Edge protection (guardrails, toe boards) installed</li><li>Workers wear safety harnesses for leading-edge work</li><li>Hard hats mandatory in all areas below working at height</li><li>Toolbox talk on working at height conducted</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Daily visual check of scaffold before use</li><li>Exclusion zone established below all elevated work</li><li>Debris nets or fans installed on scaffold</li><li>Rescue plan in place for fallen or suspended worker</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>LOW</strong> — Risk is acceptable with controls in place. Continue to monitor.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 2 =============================== -->
+<div class="card" data-cat="excavation" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">⛏️</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Excavation & Trenching</div>
+      <div class="card-title-ar">الحفر والخنادق</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-excavation">Excavation</span>
+      <span class="risk-badge risk-high">HIGH</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Collapse of excavation walls, underground services (gas, electricity, water), flooding, and engulfment.</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>Excavation workers, plant operators, anyone working near the trench edge.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Soil collapse can bury and suffocate workers. Striking a live cable can cause electrocution. Flooding can trap workers.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>Services survey and CAT scan completed before excavation</li><li>Shoring, battering, or benching applied to trenches over 1.2m</li><li>Competent person inspects excavation daily</li><li>Safe access/egress (ladders) provided every 6 metres</li><li>Spoil kept minimum 0.5m from trench edge</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Barriers and warning signs around excavation perimeter</li><li>Emergency rescue equipment available on site</li><li>Gas detector used before entry in confined sections</li><li>No plant to operate within 3m of trench edge without assessment</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>MEDIUM</strong> — Ongoing monitoring required. Inspect after every rainfall or ground disturbance.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 3 =============================== -->
+<div class="card" data-cat="electrical" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">⚡</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Electrical Hazards</div>
+      <div class="card-title-ar">المخاطر الكهربائية</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-electrical">Electrical</span>
+      <span class="risk-badge risk-high">HIGH</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Contact with live electrical cables (underground or overhead), faulty equipment, or unprotected temporary supplies.</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>All site operatives, electricians, plant operators working near overhead lines.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Electric shock causing cardiac arrest or burns. Striking a buried cable can cause explosion and fire. Overhead line contact can kill instantly.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>Services survey completed — buried cables marked</li><li>All temporary electrical equipment PAT tested</li><li>110V reduced voltage system used on site</li><li>RCDs (residual current devices) installed on all circuits</li><li>Only qualified electricians work on electrical systems</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Goal posts and height restriction barriers under overhead lines</li><li>Lockout/tagout procedure for isolation before maintenance</li><li>Daily inspection of cables, leads, and connections</li><li>Emergency plan for electrocution posted at site office</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>LOW</strong> — Risk reduced with isolation procedures and reduced voltage system.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 4 =============================== -->
+<div class="card" data-cat="manual" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">🏋️</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Manual Handling</div>
+      <div class="card-title-ar">المناولة اليدوية / الرفع اليدوي</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-manual">Manual</span>
+      <span class="risk-badge risk-med">MEDIUM</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Lifting, carrying, pushing, or pulling heavy or awkward loads such as blocks, steel bars, bags of cement, or timber.</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>Labourers, bricklayers, steel fixers, and any worker lifting materials manually.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Musculoskeletal injuries — back injuries, sprains, hernias. Dropping loads onto feet. Long-term chronic back pain.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>Manual handling training provided at induction</li><li>Mechanical aids (forklifts, hoists, trolleys) used where possible</li><li>Team lifts organised for loads over 20kg</li><li>Safety footwear worn at all times</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Materials stored at waist height where possible to avoid bending</li><li>Regular rest breaks for repetitive tasks</li><li>Workers encouraged to report pain or discomfort early</li><li>Occupational health review for workers with existing back problems</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>LOW</strong> — Risk acceptable with mechanical aids and correct technique training.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 5 =============================== -->
+<div class="card" data-cat="plant" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">🚜</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Plant & Vehicle Movement</div>
+      <div class="card-title-ar">حركة الآلات والمركبات</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-plant">Plant</span>
+      <span class="risk-badge risk-high">HIGH</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Moving excavators, dumpers, cranes, and delivery vehicles on site colliding with pedestrian workers.</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>Ground workers, delivery drivers, site visitors, workers crossing vehicle routes.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Workers struck or run over by moving plant — causing crush injuries or death. Overturning plant can trap operators.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>Segregated pedestrian and vehicle routes established</li><li>Banksman (signaller) used when reversing all large plant</li><li>Hi-vis vests worn by all site personnel</li><li>Plant operators hold valid CPCS/NPORS licences</li><li>Plant pre-use checks completed and recorded daily</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Speed limit of 10 mph enforced across site</li><li>Pedestrian exclusion zones around crane operating areas</li><li>CCTV cameras on reversing plant where banksman view is limited</li><li>Site induction includes plant/pedestrian segregation routes</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>MEDIUM</strong> — Strict site traffic management plan to be followed at all times.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 6 =============================== -->
+<div class="card" data-cat="fire" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">🔥</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Fire & Hot Works</div>
+      <div class="card-title-ar">الحريق وأعمال اللهب</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-fire">Fire</span>
+      <span class="risk-badge risk-high">HIGH</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Hot works (welding, cutting, grinding) igniting flammable materials. Arson. Spontaneous combustion of waste materials.</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>All site personnel, neighbouring properties and public.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Burns, smoke inhalation, structural collapse due to fire. Explosions from gas cylinders if exposed to heat.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>Hot works permit issued before any welding or cutting</li><li>1-hour fire watch after all hot works completed</li><li>Flammable materials removed or protected within 3m of hot works</li><li>Fire extinguishers positioned at hot work locations</li><li>Emergency evacuation procedure displayed and communicated</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Fire assembly point clearly signed and known to all</li><li>Site security to prevent arson risk out of hours</li><li>Gas cylinders stored upright, chained, in ventilated cage</li><li>Fire risk assessment reviewed monthly</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>LOW</strong> — With hot works permit system and fire watch, risk is well controlled.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 7 =============================== -->
+<div class="card" data-cat="environment" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">🛢️</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Fuel / Chemical Spill</div>
+      <div class="card-title-ar">انسكاب الوقود والمواد الكيميائية</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-environment">Environment</span>
+      <span class="risk-badge risk-med">MEDIUM</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Spillage of diesel, oil, cement washout, or chemicals during storage, refuelling, or handling operations.</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>Site workers exposed to chemicals. Environment — watercourses, soil, wildlife.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Skin or eye burns from chemical contact. Environmental contamination can result in prosecution and project shutdown.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>COSHH assessments completed for all chemicals on site</li><li>Bunded storage for all fuel tanks (110% containment)</li><li>Spill kit available at fuel storage and refuelling points</li><li>All drains covered before concrete or washout operations</li><li>Workers trained on spill response procedure</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Refuelling to take place in designated drip-proof area only</li><li>Chemical inventory reviewed monthly</li><li>Environment Agency emergency number posted on site</li><li>Concrete washout area designated — no washout near drains</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>LOW</strong> — Bunded storage and spill kits reduce risk significantly.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 8 =============================== -->
+<div class="card" data-cat="health" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">😷</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Dust & Respiratory Hazards</div>
+      <div class="card-title-ar">الغبار ومخاطر الجهاز التنفسي</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-health">Health</span>
+      <span class="risk-badge risk-med">MEDIUM</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Inhalation of concrete dust, silica dust (RCS), wood dust, or asbestos fibres during cutting, grinding, or drilling.</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>Concreters, joiners, bricklayers, demolition workers — all workers in dusty environments.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Long-term lung diseases: silicosis, asbestosis, COPD, and lung cancer. Symptoms may not appear for many years.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>COSHH assessment completed for all dusty activities</li><li>Water suppression used during cutting and grinding</li><li>On-tool extraction (vacuum) used on power tools</li><li>FFP3 dust masks provided for high-risk tasks</li><li>Asbestos survey completed before any demolition</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Enclosed or screened areas for particularly dusty operations</li><li>Regular air monitoring in confined spaces</li><li>Health surveillance programme (annual lung function checks)</li><li>Wet cutting preferred over dry cutting at all times</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>LOW</strong> — With RPE and wet suppression, risk is controlled. Monitor via health surveillance.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 9 =============================== -->
+<div class="card" data-cat="plant" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">🏗️</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Crane & Lifting Operations</div>
+      <div class="card-title-ar">عمليات الرافعة والرفع</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-plant">Plant</span>
+      <span class="risk-badge risk-high">HIGH</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Failure of crane, slings, or lifting accessories. Load swinging or dropping. Overloading of crane capacity.</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>Crane operator, slingers/signallers, workers and public in the crane's operating radius.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Dropped load causing crush injuries or death. Crane collapse or overturning can kill multiple people.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>Lift plan prepared by appointed person for all crane lifts</li><li>Crane inspected by competent person — thorough examination certificate current</li><li>All lifting accessories inspected before each use</li><li>Certified slinger/signaller on all lifts</li><li>Exclusion zone established under all suspended loads</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Critical lifts (complex or near boundaries) require specific lift plan approval</li><li>Wind speed monitoring — lifting suspended if wind exceeds safe limit</li><li>Two-way radios for communication between operator and signaller</li><li>Anti-collision device on tower cranes where multiple cranes operate</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>MEDIUM</strong> — Risk remains significant. Strict lift plan compliance is essential on every lift.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 10 =============================== -->
+<div class="card" data-cat="excavation" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">🕳️</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Confined Space Entry</div>
+      <div class="card-title-ar">الدخول إلى الأماكن المغلقة</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-excavation">Confined</span>
+      <span class="risk-badge risk-high">HIGH</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Entry into manholes, tanks, tunnels, or deep excavations with risk of oxygen deficiency, toxic gases, or engulfment.</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>Any worker entering the confined space and rescuers if the entry goes wrong.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Asphyxiation from lack of oxygen. Poisoning from toxic gases (H₂S, CO). Drowning or engulfment. Many rescuers die trying to save the original victim.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>Permit to work (confined space) signed before every entry</li><li>Atmospheric testing before and during entry (O₂, CO, H₂S, LEL)</li><li>Trained confined space entrant and standby person required</li><li>Breathing apparatus and rescue equipment on standby</li><li>Tripod and lifeline used for all vertical entries</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Confined space rescue team briefed and available before entry</li><li>Communication maintained throughout — no lone working</li><li>Non-sparking tools used in flammable atmospheres</li><li>Entry duration limited — regular atmospheric re-testing</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>MEDIUM</strong> — Never attempt rescue without correct equipment. Avoid entry unless absolutely necessary.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 11 =============================== -->
+<div class="card" data-cat="health" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">🌡️</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Heat Stress & Cold Stress</div>
+      <div class="card-title-ar">الإجهاد الحراري وإجهاد البرد</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-health">Health</span>
+      <span class="risk-badge risk-med">MEDIUM</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Working outdoors in extreme heat (summer) or extreme cold (winter), or working near heat sources (boilers, hot work).</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>All outdoor workers — particularly those in heavy PPE, doing strenuous physical work.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Heat stroke, dehydration, and loss of consciousness in hot conditions. Hypothermia, frostbite, and reduced concentration in cold conditions — increasing accident risk.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>Shade structures or rest areas provided in hot weather</li><li>Free drinking water available at all work locations</li><li>Warm welfare facilities (heated drying room) in cold weather</li><li>Work schedule adjusted during extreme temperature alerts</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Weather monitoring — toolbox talk if extreme conditions forecast</li><li>Buddy system in extreme conditions — workers check on each other</li><li>Signs and symptoms of heat stroke/hypothermia communicated to all</li><li>First aiders trained in heat/cold illness response</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>LOW</strong> — With hydration, rest breaks, and welfare facilities, risk is manageable.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- =============================== CARD 12 =============================== -->
+<div class="card" data-cat="environment" onclick="toggleCard(this)">
+  <div class="card-header">
+    <div class="card-icon">🌊</div>
+    <div class="card-title-wrap">
+      <div class="card-title">Noise & Vibration</div>
+      <div class="card-title-ar">الضوضاء والاهتزاز</div>
+    </div>
+    <div class="card-meta">
+      <span class="cat-tag cat-environment">Health/Env</span>
+      <span class="risk-badge risk-med">MEDIUM</span>
+      <span class="chevron">▼</span>
+    </div>
+  </div>
+  <div class="ra-body">
+    <table class="ra-table">
+      <tr><td class="field-label">What is the hazard?</td><td>Exposure to high noise levels from machinery, and hand-arm vibration from power tools (drills, breakers, compactors).</td></tr>
+      <tr><td class="field-label">Who might be harmed?</td><td>Workers operating noisy plant or vibrating tools. Neighbours and public near the site boundary.</td></tr>
+      <tr><td class="field-label">How might people be harmed?</td><td>Permanent noise-induced hearing loss (NIHL). Hand-arm vibration syndrome (HAVS) — permanent numbness and loss of grip. Neighbour complaints and legal action.</td></tr>
+      <tr><td class="field-label">Existing controls</td><td><ul class="controls-list"><li>Noise risk assessment completed — exposure levels measured</li><li>Hearing protection zones established and signed</li><li>Ear defenders provided at 85dB and mandatory at 87dB</li><li>Noisy operations scheduled during permitted hours only</li><li>HAVS exposure points tracked for all tool users</li></ul></td></tr>
+      <tr><td class="field-label">Additional controls</td><td><ul class="controls-list"><li>Quieter equipment specified at procurement stage</li><li>Anti-vibration gloves provided for prolonged tool use</li><li>Health surveillance (hearing tests, HAVS questionnaire) annually</li><li>Noise barriers erected near site boundaries if required</li></ul></td></tr>
+      <tr class="residual-row"><td class="field-label">Residual risk rating</td><td><strong>LOW</strong> — With hearing protection and HAVS tracking, long-term health risk is minimised.</td></tr>
+    </table>
+  </div>
+</div>
+
+</div><!-- end grid -->
+
+<div style="text-align:center; padding:24px; color:var(--muted); font-size:12px; font-family:'IBM Plex Mono',monospace; letter-spacing:1px;">
+  CONSTRUCTION SITE MANAGER — ENGLISH LEARNING PROGRAM<br>
+  <span style="color:var(--yellow)">MODULE 01 · SAFETY, HEALTH & ENVIRONMENT</span>
+</div>
+
+<script>
+function toggleCard(card) {
+  card.classList.toggle('open');
+}
+
+function filterCards(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.card').forEach(card => {
+    if (cat === 'all' || card.dataset.cat === cat) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>
