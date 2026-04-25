@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة إنسان حيوان نبات - مع مشاركة واتساب</title>
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --accent: #f39c12;
+            --danger: #e74c3c;
+            --whatsapp: #25D366;
+            --light: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; color: var(--primary); margin-top: 0; }
+
+        .input-group { margin-bottom: 15px; }
+
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        input:focus { border-color: var(--primary); outline: none; }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-finish { background-color: var(--danger); color: white; }
+        .btn-whatsapp { background-color: var(--whatsapp); color: white; }
+        .btn:active { transform: scale(0.98); }
+
+        .history-section {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        th { background-color: var(--primary); color: white; }
+
+        .letter-box {
+            font-size: 24px;
+            background: var(--accent);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="letter-box">لعبة إنسان حيوان نبات 🎮</div>
+
+    <div class="container">
+        <h1>أدخل إجاباتك</h1>
+        
+        <div class="input-group">
+            <label>👤 إنسان:</label>
+            <input type="text" id="human">
+        </div>
+        <div class="input-group">
+            <label>🦁 حيوان:</label>
+            <input type="text" id="animal">
+        </div>
+        <div class="input-group">
+            <label>🌿 نبات:</label>
+            <input type="text" id="plant">
+        </div>
+        <div class="input-group">
+            <label>🧱 جماد:</label>
+            <input type="text" id="object">
+        </div>
+        <div class="input-group">
+            <label>🌍 بلاد:</label>
+            <input type="text" id="country">
+        </div>
+
+        <button class="btn btn-finish" onclick="finishGame()">🛑 ستوب! (تنبيه وحفظ)</button>
+        <button class="btn btn-whatsapp" onclick="shareToWhatsApp()">📲 مشاركة عبر واتساب</button>
+    </div>
+
+    <div class="history-section">
+        <h3>النتائج السابقة المكتوبة:</h3>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>إنسان</th>
+                    <th>حيوان</th>
+                    <th>نبات</th>
+                    <th>جماد</th>
+                    <th>بلاد</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button class="btn" style="background:#888; color:white; font-size: 14px; padding: 8px;" onclick="clearHistory()">مسح السجل</button>
+    </div>
+
+    <audio id="alertSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+    <script>
+        window.onload = displayHistory;
+
+        function finishGame() {
+            // تنبيه قوي (اهتزاز وصوت)
+            if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+            document.getElementById('alertSound').play();
+
+            const data = {
+                human: document.getElementById('human').value || '-',
+                animal: document.getElementById('animal').value || '-',
+                plant: document.getElementById('plant').value || '-',
+                object: document.getElementById('object').value || '-',
+                country: document.getElementById('country').value || '-'
+            };
+
+            // حفظ في الذاكرة
+            let games = JSON.parse(localStorage.getItem('gameHistory')) || [];
+            games.push(data);
+            localStorage.setItem('gameHistory', JSON.stringify(games));
+
+            displayHistory();
+            alert("تم الحفظ والتنبيه! الآن يمكنك الضغط على مشاركة لإرسالها للفرق الأخرى.");
+        }
+
+        function shareToWhatsApp() {
+            const h = document.getElementById('human').value;
+            const a = document.getElementById('animal').value;
+            const p = document.getElementById('plant').value;
+            const o = document.getElementById('object').value;
+            const c = document.getElementById('country').value;
+
+            if(!h && !a && !p && !o && !c) {
+                alert("اكتب شيئاً أولاً لتشاركه!");
+                return;
+            }
+
+            // تنسيق الرسالة
+            const message = `*نتائجي في لعبة إنسان حيوان نبات:*%0A` +
+                            `👤 *إنسان:* ${h}%0A` +
+                            `🦁 *حيوان:* ${a}%0A` +
+                            `🌿 *نبات:* ${p}%0A` +
+                            `🧱 *جماد:* ${o}%0A` +
+                            `🌍 *بلاد:* ${c}`;
+
+            // فتح رابط واتساب
+            const whatsappUrl = `https://wa.me/?text=${message}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function displayHistory() {
+            const tableBody = document.querySelector('#historyTable tbody');
+            const games = JSON.parse(localStorage.getItem('gameHistory')) || [];
+            tableBody.innerHTML = '';
+            games.slice().reverse().forEach(game => { // عرض الأحدث أولاً
+                tableBody.innerHTML += `<tr>
+                    <td>${game.human}</td>
+                    <td>${game.animal}</td>
+                    <td>${game.plant}</td>
+                    <td>${game.object}</td>
+                    <td>${game.country}</td>
+                </tr>`;
+            });
+        }
+
+        function clearHistory() {
+            if(confirm("هل تريد مسح السجل؟")) {
+                localStorage.removeItem('gameHistory');
+                displayHistory();
+            }
+        }
+    </script>
+</body>
+</html>
