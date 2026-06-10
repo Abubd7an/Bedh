@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بطاقات تعليمية - كلمات C | Oxford 3000</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Playfair+Display:wght@700&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e17;
+    --surface: #1a1829;
+    --card-bg: #201e33;
+    --accent: #f4c542;
+    --accent2: #e05c5c;
+    --accent3: #5ce0c0;
+    --text: #e8e6f0;
+    --muted: #8b89a0;
+    --border: rgba(244,197,66,0.18);
+    --A1: #5ce0c0;
+    --A2: #42a5f5;
+    --B1: #ab7cf5;
+    --B2: #f06292;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Tajawal', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, #1a1829 0%, #0f0e17 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    direction: ltr;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-top: 0.4rem;
+  }
+
+  /* Stats Bar */
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .level-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Controls */
+  .controls {
+    padding: 1.5rem 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-btn {
+    padding: 0.4rem 1.1rem;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); color: #0f0e17; font-weight: 700; border-color: var(--accent); }
+
+  .search-box {
+    padding: 0.45rem 1.2rem;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    min-width: 200px;
+    direction: ltr;
+    transition: border-color 0.2s;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--muted); }
+
+  /* Counter */
+  .counter {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+    padding: 0.8rem;
+    background: var(--bg);
+  }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Flashcard */
+  .card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    animation: fadeInUp 0.4s ease both;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(244,197,66,0.12);
+    border-color: var(--accent);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.2rem 0.6rem;
+  }
+
+  .word-en {
+    font-family: 'Fira Mono', monospace;
+    font-size: 1.35rem;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    direction: ltr;
+  }
+
+  .level-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 8px;
+    font-family: 'Fira Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  .badge-A1 { background: rgba(92,224,192,0.15); color: var(--A1); border: 1px solid var(--A1); }
+  .badge-A2 { background: rgba(66,165,245,0.15); color: var(--A2); border: 1px solid var(--A2); }
+  .badge-B1 { background: rgba(171,124,245,0.15); color: var(--B1); border: 1px solid var(--B1); }
+  .badge-B2 { background: rgba(240,98,146,0.15); color: var(--B2); border: 1px solid var(--B2); }
+
+  .card-body {
+    padding: 0 1.2rem 0.8rem;
+  }
+
+  .meanings {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .meaning-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    direction: rtl;
+  }
+
+  .pos-tag {
+    font-size: 0.7rem;
+    background: rgba(255,255,255,0.07);
+    color: var(--muted);
+    padding: 0.15rem 0.45rem;
+    border-radius: 5px;
+    white-space: nowrap;
+    margin-top: 2px;
+    font-family: 'Fira Mono', monospace;
+    flex-shrink: 0;
+    direction: ltr;
+  }
+
+  .translation {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0.6rem 0;
+  }
+
+  .example-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+    text-align: right;
+  }
+
+  .example {
+    font-family: 'Fira Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent3);
+    direction: ltr;
+    line-height: 1.5;
+    background: rgba(92,224,192,0.05);
+    border-right: 2px solid var(--accent3);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    margin-bottom: 0.3rem;
+  }
+
+  .example-ar {
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-align: right;
+    direction: rtl;
+    padding: 0 0.3rem;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .no-results {
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.2rem;
+    padding: 4rem 2rem;
+    grid-column: 1/-1;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>C — Oxford 3000™</h1>
+  <p>بطاقات تعليمية لجميع كلمات حرف C مع الترجمة والأمثلة</p>
+  <div class="stats">
+    <div class="stat-item"><span class="level-dot" style="background:var(--A1)"></span> A1 - مبتدئ</div>
+    <div class="stat-item"><span class="level-dot" style="background:var(--A2)"></span> A2 - أساسي</div>
+    <div class="stat-item"><span class="level-dot" style="background:var(--B1)"></span> B1 - متوسط</div>
+    <div class="stat-item"><span class="level-dot" style="background:var(--B2)"></span> B2 - متقدم</div>
+  </div>
+</header>
+
+<div class="controls">
+  <input class="search-box" type="text" id="searchInput" placeholder="Search in English or Arabic..." oninput="filterCards()">
+  <button class="filter-btn active" onclick="filterLevel('all', this)">الكل</button>
+  <button class="filter-btn" onclick="filterLevel('A1', this)">A1</button>
+  <button class="filter-btn" onclick="filterLevel('A2', this)">A2</button>
+  <button class="filter-btn" onclick="filterLevel('B1', this)">B1</button>
+  <button class="filter-btn" onclick="filterLevel('B2', this)">B2</button>
+</div>
+
+<div class="counter" id="counter"></div>
+
+<div class="grid" id="grid"></div>
+
+<footer>Oxford 3000™ © Oxford University Press | بطاقات تعليمية تفاعلية</footer>
+
+<script>
+const words = [
+  {
+    word: "cable", level: "B2",
+    meanings: [{pos:"n.", ar:"كابل / سلك"}],
+    ex: "The cable connects the TV to the wall.", ex_ar: "الكابل يصل التلفاز بالحائط."
+  },
+  {
+    word: "cafe", level: "A1",
+    meanings: [{pos:"n.", ar:"مقهى"}],
+    ex: "Let's meet at the cafe after class.", ex_ar: "لنلتقِ في المقهى بعد الفصل."
+  },
+  {
+    word: "cake", level: "A1",
+    meanings: [{pos:"n.", ar:"كعكة / تورتة"}],
+    ex: "She baked a chocolate cake for the party.", ex_ar: "خبزت كعكة شوكولاتة للحفلة."
+  },
+  {
+    word: "calculate", level: "B2",
+    meanings: [{pos:"v.", ar:"يحسب / يحسب رياضيًا"}],
+    ex: "Can you calculate the total cost?", ex_ar: "هل يمكنك حساب التكلفة الإجمالية؟"
+  },
+  {
+    word: "call", level: "A1",
+    meanings: [{pos:"v.", ar:"يتصل / يُنادي"}, {pos:"n.", ar:"مكالمة / نداء"}],
+    ex: "I'll call you tonight.", ex_ar: "سأتصل بك الليلة."
+  },
+  {
+    word: "calm", level: "B1",
+    meanings: [{pos:"adj.", ar:"هادئ"}, {pos:"v.", ar:"يهدّئ"}, {pos:"n.", ar:"هدوء"}],
+    ex: "Stay calm and take a deep breath.", ex_ar: "ابقَ هادئًا وخذ نفسًا عميقًا."
+  },
+  {
+    word: "camera", level: "A1",
+    meanings: [{pos:"n.", ar:"كاميرا"}],
+    ex: "He took a photo with his camera.", ex_ar: "التقط صورة بكاميرته."
+  },
+  {
+    word: "camp", level: "A2",
+    meanings: [{pos:"n.", ar:"مخيم"}, {pos:"v.", ar:"يُخيّم"}],
+    ex: "We camp near the river every summer.", ex_ar: "نُخيّم بالقرب من النهر كل صيف."
+  },
+  {
+    word: "campaign", level: "B1",
+    meanings: [{pos:"n.", ar:"حملة (إعلانية/سياسية)"}, {pos:"v.", ar:"يُشنّ حملة"}],
+    ex: "They launched a campaign against pollution.", ex_ar: "أطلقوا حملة ضد التلوث."
+  },
+  {
+    word: "camping", level: "A2",
+    meanings: [{pos:"n.", ar:"التخييم"}],
+    ex: "Camping is fun in the mountains.", ex_ar: "التخييم ممتع في الجبال."
+  },
+  {
+    word: "campus", level: "B1",
+    meanings: [{pos:"n.", ar:"حرم جامعي"}],
+    ex: "The library is in the center of campus.", ex_ar: "المكتبة في وسط الحرم الجامعي."
+  },
+  {
+    word: "can", level: "A1",
+    meanings: [{pos:"modal v.", ar:"يستطيع / يمكن"}, {pos:"n.", ar:"علبة / صفيحة"}],
+    ex: "Can you speak Arabic?", ex_ar: "هل تستطيع التحدث بالعربية؟"
+  },
+  {
+    word: "cancel", level: "B2",
+    meanings: [{pos:"v.", ar:"يُلغي"}],
+    ex: "They had to cancel the flight.", ex_ar: "اضطروا إلى إلغاء الرحلة."
+  },
+  {
+    word: "cancer", level: "B2",
+    meanings: [{pos:"n.", ar:"سرطان"}],
+    ex: "Early detection of cancer saves lives.", ex_ar: "الكشف المبكر عن السرطان يُنقذ الأرواح."
+  },
+  {
+    word: "candidate", level: "B1",
+    meanings: [{pos:"n.", ar:"مُرشَّح / مُتقدِّم"}],
+    ex: "She is the best candidate for the job.", ex_ar: "هي أفضل مرشحة للوظيفة."
+  },
+  {
+    word: "cannot", level: "A1",
+    meanings: [{pos:"v.", ar:"لا يستطيع / can't"}],
+    ex: "I cannot come to the meeting today.", ex_ar: "لا أستطيع الحضور للاجتماع اليوم."
+  },
+  {
+    word: "cap", level: "B1",
+    meanings: [{pos:"n.", ar:"قبعة / غطاء / حد أقصى"}],
+    ex: "He wore a blue cap at the game.", ex_ar: "ارتدى قبعة زرقاء في المباراة."
+  },
+  {
+    word: "capable", level: "B2",
+    meanings: [{pos:"adj.", ar:"قادر / مؤهل"}],
+    ex: "She is capable of solving the problem.", ex_ar: "هي قادرة على حل المشكلة."
+  },
+  {
+    word: "capacity", level: "B2",
+    meanings: [{pos:"n.", ar:"طاقة استيعابية / قدرة"}],
+    ex: "The stadium has a capacity of 50,000.", ex_ar: "يتسع الملعب لـ 50,000 شخص."
+  },
+  {
+    word: "capital", level: "A1",
+    meanings: [{pos:"n.", ar:"عاصمة / رأس مال"}, {pos:"adj.", ar:"رأسمالي / كبير (حرف)"}],
+    ex: "Paris is the capital of France.", ex_ar: "باريس هي عاصمة فرنسا."
+  },
+  {
+    word: "captain", level: "B1",
+    meanings: [{pos:"n.", ar:"قائد / ربان / كابتن"}],
+    ex: "The captain led the team to victory.", ex_ar: "قاد الكابتن الفريق إلى الفوز."
+  },
+  {
+    word: "capture", level: "B2",
+    meanings: [{pos:"v.", ar:"يأسر / يلتقط"}, {pos:"n.", ar:"أسر / التقاط"}],
+    ex: "The photo captured a beautiful moment.", ex_ar: "التقطت الصورة لحظة جميلة."
+  },
+  {
+    word: "car", level: "A1",
+    meanings: [{pos:"n.", ar:"سيارة"}],
+    ex: "He drives to work by car.", ex_ar: "يذهب إلى العمل بالسيارة."
+  },
+  {
+    word: "card", level: "A1",
+    meanings: [{pos:"n.", ar:"بطاقة / كارت"}],
+    ex: "She sent him a birthday card.", ex_ar: "أرسلت له بطاقة عيد ميلاد."
+  },
+  {
+    word: "care", level: "A2",
+    meanings: [{pos:"n.", ar:"اهتمام / رعاية"}, {pos:"v.", ar:"يهتم / يرعى"}],
+    ex: "She takes care of her elderly parents.", ex_ar: "تعتني بوالديها المسنَّين."
+  },
+  {
+    word: "career", level: "A1",
+    meanings: [{pos:"n.", ar:"مسيرة مهنية / وظيفة"}],
+    ex: "He had a long career in medicine.", ex_ar: "امتد مشواره المهني في الطب لفترة طويلة."
+  },
+  {
+    word: "careful", level: "A2",
+    meanings: [{pos:"adj.", ar:"حذر / دقيق"}],
+    ex: "Be careful when crossing the road.", ex_ar: "كن حذرًا عند عبور الطريق."
+  },
+  {
+    word: "carefully", level: "A2",
+    meanings: [{pos:"adv.", ar:"بعناية / بحذر"}],
+    ex: "Read the instructions carefully.", ex_ar: "اقرأ التعليمات بعناية."
+  },
+  {
+    word: "careless", level: "B1",
+    meanings: [{pos:"adj.", ar:"مهمل / غير حذر"}],
+    ex: "A careless mistake cost them the match.", ex_ar: "خطأ بسبب الإهمال كلّفهم المباراة."
+  },
+  {
+    word: "carpet", level: "A2",
+    meanings: [{pos:"n.", ar:"سجادة / موكيت"}],
+    ex: "The living room has a red carpet.", ex_ar: "غرفة المعيشة فيها سجادة حمراء."
+  },
+  {
+    word: "carrot", level: "A1",
+    meanings: [{pos:"n.", ar:"جزرة"}],
+    ex: "Carrots are good for your eyes.", ex_ar: "الجزر مفيد للعيون."
+  },
+  {
+    word: "carry", level: "A1",
+    meanings: [{pos:"v.", ar:"يحمل / ينقل"}],
+    ex: "Can you carry these bags for me?", ex_ar: "هل يمكنك حمل هذه الحقائب بدلًا عني؟"
+  },
+  {
+    word: "cartoon", level: "A2",
+    meanings: [{pos:"n.", ar:"رسوم متحركة / كاريكاتير"}],
+    ex: "The kids watched cartoons all morning.", ex_ar: "شاهد الأطفال الرسوم المتحركة طوال الصباح."
+  },
+  {
+    word: "case", level: "A2",
+    meanings: [{pos:"n.", ar:"حالة / قضية / حقيبة"}],
+    ex: "In that case, we should leave early.", ex_ar: "في هذه الحالة، يجب أن نغادر مبكرًا."
+  },
+  {
+    word: "cash", level: "A2",
+    meanings: [{pos:"n.", ar:"نقود / كاش"}],
+    ex: "Do you pay by cash or card?", ex_ar: "هل تدفع نقدًا أم بالبطاقة؟"
+  },
+  {
+    word: "cast", level: "B2",
+    meanings: [{pos:"n.", ar:"طاقم تمثيل"}, {pos:"v.", ar:"يُلقي / يختار ممثلين"}],
+    ex: "The movie has an amazing cast.", ex_ar: "الفيلم لديه طاقم تمثيل رائع."
+  },
+  {
+    word: "castle", level: "A2",
+    meanings: [{pos:"n.", ar:"قلعة"}],
+    ex: "The old castle is on top of the hill.", ex_ar: "القلعة القديمة على قمة التل."
+  },
+  {
+    word: "cat", level: "A1",
+    meanings: [{pos:"n.", ar:"قطة"}],
+    ex: "My cat sleeps on the sofa.", ex_ar: "قطتي تنام على الأريكة."
+  },
+  {
+    word: "catch", level: "A2",
+    meanings: [{pos:"v.", ar:"يمسك / يُدرك"}, {pos:"n.", ar:"مسكة / إمساك"}],
+    ex: "He tried to catch the ball.", ex_ar: "حاول الإمساك بالكرة."
+  },
+  {
+    word: "category", level: "B1",
+    meanings: [{pos:"n.", ar:"فئة / تصنيف"}],
+    ex: "This falls into a different category.", ex_ar: "هذا يندرج ضمن فئة مختلفة."
+  },
+  {
+    word: "cause", level: "A2",
+    meanings: [{pos:"n.", ar:"سبب / قضية"}, {pos:"v.", ar:"يُسبِّب / يُحدث"}],
+    ex: "Stress can cause headaches.", ex_ar: "يمكن أن يُسبِّب التوتر الصداع."
+  },
+  {
+    word: "CD", level: "A1",
+    meanings: [{pos:"n.", ar:"قرص مضغوط (CD)"}],
+    ex: "She bought a music CD at the store.", ex_ar: "اشترت قرصًا موسيقيًا من المتجر."
+  },
+  {
+    word: "ceiling", level: "B1",
+    meanings: [{pos:"n.", ar:"سقف (داخلي)"}],
+    ex: "The ceiling of the room is very high.", ex_ar: "سقف الغرفة مرتفع جدًا."
+  },
+  {
+    word: "celebrate", level: "A2",
+    meanings: [{pos:"v.", ar:"يحتفل"}],
+    ex: "We celebrate New Year with fireworks.", ex_ar: "نحتفل برأس السنة بألعاب نارية."
+  },
+  {
+    word: "celebration", level: "B1",
+    meanings: [{pos:"n.", ar:"احتفال"}],
+    ex: "The celebration lasted all night.", ex_ar: "استمر الاحتفال طوال الليل."
+  },
+  {
+    word: "celebrity", level: "A2",
+    meanings: [{pos:"n.", ar:"مشهور / نجم / شخصية مشهورة"}],
+    ex: "The celebrity signed autographs for fans.", ex_ar: "وقّع المشهور توقيعاته للمعجبين."
+  },
+  {
+    word: "cell", level: "B2",
+    meanings: [{pos:"n.", ar:"خلية (بيولوجية) / زنزانة"}],
+    ex: "The body is made of billions of cells.", ex_ar: "يتكون الجسم من مليارات الخلايا."
+  },
+  {
+    word: "cent", level: "A1",
+    meanings: [{pos:"n.", ar:"سنت (عملة)"}],
+    ex: "This costs fifty cents.", ex_ar: "هذا يكلف خمسين سنتًا."
+  },
+  {
+    word: "central", level: "B1",
+    meanings: [{pos:"adj.", ar:"مركزي / رئيسي"}],
+    ex: "The hotel is in a central location.", ex_ar: "الفندق في موقع مركزي."
+  },
+  {
+    word: "centre", level: "A1",
+    meanings: [{pos:"n.", ar:"مركز"}, {pos:"v.", ar:"يُمركز"}],
+    ex: "Meet me at the shopping centre.", ex_ar: "قابلني في مركز التسوق."
+  },
+  {
+    word: "century", level: "A1",
+    meanings: [{pos:"n.", ar:"قرن (100 عام)"}],
+    ex: "The building is two centuries old.", ex_ar: "المبنى يعود لقرنين من الزمن."
+  },
+  {
+    word: "ceremony", level: "B1",
+    meanings: [{pos:"n.", ar:"حفل / مراسم"}],
+    ex: "The graduation ceremony was beautiful.", ex_ar: "حفل التخرج كان رائعًا."
+  },
+  {
+    word: "certain", level: "A2",
+    meanings: [{pos:"adj.", ar:"متأكد / معيّن"}],
+    ex: "Are you certain about that?", ex_ar: "هل أنت متأكد من ذلك؟"
+  },
+  {
+    word: "certainly", level: "A2",
+    meanings: [{pos:"adv.", ar:"بالتأكيد / حتمًا"}],
+    ex: "I will certainly help you.", ex_ar: "سأساعدك بالتأكيد."
+  },
+  {
+    word: "chain", level: "B1",
+    meanings: [{pos:"n.", ar:"سلسلة"}, {pos:"v.", ar:"يُقيّد بسلسلة"}],
+    ex: "She wore a gold chain around her neck.", ex_ar: "ارتدت سلسلة ذهبية حول عنقها."
+  },
+  {
+    word: "chair", level: "A1",
+    meanings: [{pos:"n.", ar:"كرسي"}, {pos:"v.", ar:"يترأس / يدير"}],
+    ex: "Please sit on this chair.", ex_ar: "من فضلك اجلس على هذا الكرسي."
+  },
+  {
+    word: "chairman", level: "B2",
+    meanings: [{pos:"n.", ar:"رئيس مجلس / رئيس اجتماع"}],
+    ex: "The chairman opened the meeting.", ex_ar: "افتتح الرئيس الاجتماع."
+  },
+  {
+    word: "challenge", level: "B1",
+    meanings: [{pos:"n.", ar:"تحدٍّ"}, {pos:"v.", ar:"يتحدى"}],
+    ex: "Learning a new language is a great challenge.", ex_ar: "تعلم لغة جديدة تحدٍّ كبير."
+  },
+  {
+    word: "champion", level: "B1",
+    meanings: [{pos:"n.", ar:"بطل"}],
+    ex: "He became the world champion last year.", ex_ar: "أصبح بطل العالم العام الماضي."
+  },
+  {
+    word: "chance", level: "A2",
+    meanings: [{pos:"n.", ar:"فرصة / احتمال"}],
+    ex: "This is your chance to shine.", ex_ar: "هذه فرصتك للتألق."
+  },
+  {
+    word: "change", level: "A1",
+    meanings: [{pos:"v.", ar:"يُغيِّر / يتغير"}, {pos:"n.", ar:"تغيير / فكّة"}],
+    ex: "Everything changes with time.", ex_ar: "كل شيء يتغير مع مرور الوقت."
+  },
+  {
+    word: "channel", level: "B1",
+    meanings: [{pos:"n.", ar:"قناة (تلفزيونية) / مجرى"}],
+    ex: "What channel is the news on?", ex_ar: "على أي قناة الأخبار؟"
+  },
+  {
+    word: "chapter", level: "B1",
+    meanings: [{pos:"n.", ar:"فصل (في كتاب)"}],
+    ex: "Read chapter three for homework.", ex_ar: "اقرأ الفصل الثالث كواجب."
+  },
+  {
+    word: "character", level: "A2",
+    meanings: [{pos:"n.", ar:"شخصية / طابع / حرف"}],
+    ex: "The main character in the novel is brave.", ex_ar: "الشخصية الرئيسية في الرواية شجاعة."
+  },
+  {
+    word: "characteristic", level: "B2",
+    meanings: [{pos:"n.", ar:"خاصية / سمة"}, {pos:"adj.", ar:"مميّز / نموذجي"}],
+    ex: "Kindness is her most notable characteristic.", ex_ar: "اللطف هو أبرز سماتها."
+  },
+  {
+    word: "charge", level: "B1",
+    meanings: [{pos:"n.", ar:"رسوم / اتهام / شحن"}, {pos:"v.", ar:"يفرض رسومًا / يتهم / يشحن"}],
+    ex: "They charge extra for delivery.", ex_ar: "يفرضون رسومًا إضافية على التوصيل."
+  },
+  {
+    word: "charity", level: "A2",
+    meanings: [{pos:"n.", ar:"جمعية خيرية / صدقة"}],
+    ex: "She donates to charity every month.", ex_ar: "تتبرع للجمعيات الخيرية كل شهر."
+  },
+  {
+    word: "chart", level: "A1",
+    meanings: [{pos:"n.", ar:"مخطط / جدول / خريطة"}, {pos:"v.", ar:"يُخطِّط / يرسم مخططًا"}],
+    ex: "The chart shows sales growth.", ex_ar: "يُظهر المخطط نمو المبيعات."
+  },
+  {
+    word: "chat", level: "A2",
+    meanings: [{pos:"v.", ar:"يتحدث / يدردش"}, {pos:"n.", ar:"دردشة / محادثة"}],
+    ex: "We had a long chat over coffee.", ex_ar: "تحدثنا طويلًا على القهوة."
+  },
+  {
+    word: "cheap", level: "A1",
+    meanings: [{pos:"adj.", ar:"رخيص"}, {pos:"adv.", ar:"بسعر رخيص"}],
+    ex: "This shirt is cheap but good quality.", ex_ar: "هذا القميص رخيص لكن جودته جيدة."
+  },
+  {
+    word: "cheat", level: "B1",
+    meanings: [{pos:"v.", ar:"يغش / يخدع"}, {pos:"n.", ar:"غشاش / خداع"}],
+    ex: "It is wrong to cheat on a test.", ex_ar: "الغش في الامتحان أمر خاطئ."
+  },
+  {
+    word: "check", level: "A1",
+    meanings: [{pos:"v.", ar:"يتحقق / يفحص"}, {pos:"n.", ar:"فحص / شيك"}],
+    ex: "Check your email before the meeting.", ex_ar: "تحقق من بريدك الإلكتروني قبل الاجتماع."
+  },
+  {
+    word: "chef", level: "A2",
+    meanings: [{pos:"n.", ar:"طاهٍ / شيف"}],
+    ex: "The chef prepared a delicious meal.", ex_ar: "أعد الشيف وجبة لذيذة."
+  },
+  {
+    word: "cheerful", level: "B1",
+    meanings: [{pos:"adj.", ar:"مبتهج / مرح / مبهج"}],
+    ex: "She is always cheerful in the morning.", ex_ar: "هي دائمًا مبتهجة في الصباح."
+  },
+  {
+    word: "cheese", level: "A1",
+    meanings: [{pos:"n.", ar:"جبن"}],
+    ex: "I love cheese on my pasta.", ex_ar: "أحب الجبن على المعكرونة."
+  },
+  {
+    word: "chemical", level: "B1",
+    meanings: [{pos:"adj.", ar:"كيميائي"}, {pos:"n.", ar:"مادة كيميائية"}],
+    ex: "Some chemical reactions produce heat.", ex_ar: "بعض التفاعلات الكيميائية تُنتج حرارة."
+  },
+  {
+    word: "chemistry", level: "A2",
+    meanings: [{pos:"n.", ar:"كيمياء"}],
+    ex: "Chemistry is my favourite science.", ex_ar: "الكيمياء مادتي العلمية المفضلة."
+  },
+  {
+    word: "chest", level: "B1",
+    meanings: [{pos:"n.", ar:"صدر / صندوق"}],
+    ex: "He felt pain in his chest.", ex_ar: "شعر بألم في صدره."
+  },
+  {
+    word: "chicken", level: "A1",
+    meanings: [{pos:"n.", ar:"دجاج"}],
+    ex: "Grilled chicken is healthy and tasty.", ex_ar: "الدجاج المشوي صحي ولذيذ."
+  },
+  {
+    word: "chief", level: "B2",
+    meanings: [{pos:"adj.", ar:"رئيسي / أول"}, {pos:"n.", ar:"زعيم / رئيس"}],
+    ex: "Safety is the chief concern.", ex_ar: "السلامة هي الشغل الشاغل الرئيسي."
+  },
+  {
+    word: "child", level: "A1",
+    meanings: [{pos:"n.", ar:"طفل / ولد / ابن"}],
+    ex: "Every child needs love and care.", ex_ar: "كل طفل يحتاج إلى الحب والرعاية."
+  },
+  {
+    word: "childhood", level: "B1",
+    meanings: [{pos:"n.", ar:"طفولة"}],
+    ex: "She had a happy childhood.", ex_ar: "قضت طفولة سعيدة."
+  },
+  {
+    word: "chip", level: "A2",
+    meanings: [{pos:"n.", ar:"رقاقة (بطاطا) / شريحة إلكترونية / شظية"}],
+    ex: "He ate a bag of chips while watching TV.", ex_ar: "أكل كيسًا من الرقائق أثناء مشاهدة التلفاز."
+  },
+  {
+    word: "chocolate", level: "A1",
+    meanings: [{pos:"n.", ar:"شوكولاتة"}],
+    ex: "Dark chocolate is good for you.", ex_ar: "الشوكولاتة الداكنة مفيدة لك."
+  },
+  {
+    word: "choice", level: "A2",
+    meanings: [{pos:"n.", ar:"اختيار / خيار"}],
+    ex: "It was a difficult choice to make.", ex_ar: "كان ذلك اختيارًا صعبًا."
+  },
+  {
+    word: "choose", level: "A1",
+    meanings: [{pos:"v.", ar:"يختار"}],
+    ex: "You can choose any colour you like.", ex_ar: "يمكنك اختيار أي لون تحبه."
+  },
+  {
+    word: "church", level: "A2",
+    meanings: [{pos:"n.", ar:"كنيسة"}],
+    ex: "The old church is in the town square.", ex_ar: "الكنيسة القديمة في ساحة المدينة."
+  },
+  {
+    word: "cigarette", level: "A2",
+    meanings: [{pos:"n.", ar:"سيجارة"}],
+    ex: "Smoking cigarettes is harmful to health.", ex_ar: "تدخين السجائر ضار بالصحة."
+  },
+  {
+    word: "cinema", level: "A1",
+    meanings: [{pos:"n.", ar:"سينما / دار سينما"}],
+    ex: "Let's go to the cinema this weekend.", ex_ar: "لنذهب إلى السينما هذا الأسبوع."
+  },
+  {
+    word: "circle", level: "A2",
+    meanings: [{pos:"n.", ar:"دائرة / حلقة"}, {pos:"v.", ar:"يحيط / يدور"}],
+    ex: "The students sat in a circle.", ex_ar: "جلس الطلاب في شكل دائرة."
+  },
+  {
+    word: "circumstance", level: "B2",
+    meanings: [{pos:"n.", ar:"ظرف / وضع / ملابسات"}],
+    ex: "Under normal circumstances, I would agree.", ex_ar: "في الظروف الاعتيادية، كنت سأوافق."
+  },
+  {
+    word: "cite", level: "B2",
+    meanings: [{pos:"v.", ar:"يستشهد / يذكر / يقتبس"}],
+    ex: "Always cite your sources in essays.", ex_ar: "دائمًا استشهد بمصادرك في المقالات."
+  },
+  {
+    word: "citizen", level: "B2",
+    meanings: [{pos:"n.", ar:"مواطن"}],
+    ex: "Every citizen has rights and duties.", ex_ar: "لكل مواطن حقوق وواجبات."
+  },
+  {
+    word: "city", level: "A1",
+    meanings: [{pos:"n.", ar:"مدينة"}],
+    ex: "New York is a very busy city.", ex_ar: "نيويورك مدينة مزدحمة جدًا."
+  },
+  {
+    word: "civil", level: "B2",
+    meanings: [{pos:"adj.", ar:"مدني / حضاري / لبق"}],
+    ex: "Keep the discussion civil, please.", ex_ar: "يرجى إبقاء النقاش محترمًا."
+  },
+  {
+    word: "claim", level: "B1",
+    meanings: [{pos:"v.", ar:"يدّعي / يطالب"}, {pos:"n.", ar:"ادعاء / مطالبة"}],
+    ex: "He claims he saw the accident.", ex_ar: "يدّعي أنه شهد الحادثة."
+  },
+  {
+    word: "class", level: "A1",
+    meanings: [{pos:"n.", ar:"فصل / صف / فئة / درجة"}],
+    ex: "The class starts at eight o'clock.", ex_ar: "يبدأ الفصل الدراسي في الثامنة صباحًا."
+  },
+  {
+    word: "classic", level: "B2",
+    meanings: [{pos:"adj.", ar:"كلاسيكي / نموذجي"}, {pos:"n.", ar:"عمل كلاسيكي"}],
+    ex: "Romeo and Juliet is a classic love story.", ex_ar: "روميو وجولييت قصة حب كلاسيكية."
+  },
+  {
+    word: "classical", level: "A2",
+    meanings: [{pos:"adj.", ar:"كلاسيكي (موسيقى / أدب)"}],
+    ex: "She enjoys classical music.", ex_ar: "تستمتع بالموسيقى الكلاسيكية."
+  },
+  {
+    word: "classroom", level: "A1",
+    meanings: [{pos:"n.", ar:"فصل دراسي / قاعة"}],
+    ex: "The classroom has twenty students.", ex_ar: "يضم الفصل الدراسي عشرين طالبًا."
+  },
+  {
+    word: "clause", level: "B1",
+    meanings: [{pos:"n.", ar:"جملة (نحو) / بند (قانوني)"}],
+    ex: "The contract has an important clause.", ex_ar: "العقد يحتوي على بند مهم."
+  },
+  {
+    word: "clean", level: "A1",
+    meanings: [{pos:"adj.", ar:"نظيف"}, {pos:"v.", ar:"يُنظِّف"}],
+    ex: "Please clean your room before dinner.", ex_ar: "من فضلك نظّف غرفتك قبل العشاء."
+  },
+  {
+    word: "clear", level: "A2",
+    meanings: [{pos:"adj.", ar:"واضح / صافٍ"}, {pos:"v.", ar:"يُخلي / يُوضِّح"}],
+    ex: "The instructions are not clear.", ex_ar: "التعليمات ليست واضحة."
+  },
+  {
+    word: "clearly", level: "A2",
+    meanings: [{pos:"adv.", ar:"بوضوح / من الواضح"}],
+    ex: "Please speak clearly and slowly.", ex_ar: "تحدث بوضوح وببطء من فضلك."
+  },
+  {
+    word: "clever", level: "A2",
+    meanings: [{pos:"adj.", ar:"ذكي / بارع"}],
+    ex: "That was a clever solution.", ex_ar: "كان ذلك حلًا ذكيًا."
+  },
+  {
+    word: "click", level: "B1",
+    meanings: [{pos:"v.", ar:"ينقر (على الفأرة)"}, {pos:"n.", ar:"نقرة / صوت طقطقة"}],
+    ex: "Click the button to continue.", ex_ar: "انقر على الزر للمتابعة."
+  },
+  {
+    word: "client", level: "B1",
+    meanings: [{pos:"n.", ar:"عميل / زبون"}],
+    ex: "The client was happy with the result.", ex_ar: "كان العميل سعيدًا بالنتيجة."
+  },
+  {
+    word: "climate", level: "A2",
+    meanings: [{pos:"n.", ar:"مناخ / طقس عام"}],
+    ex: "The climate here is warm and dry.", ex_ar: "المناخ هنا دافئ وجاف."
+  },
+  {
+    word: "climb", level: "A1",
+    meanings: [{pos:"v.", ar:"يتسلق / يصعد"}, {pos:"n.", ar:"تسلق"}],
+    ex: "They climbed the mountain in two days.", ex_ar: "تسلّقوا الجبل في يومين."
+  },
+  {
+    word: "clock", level: "A1",
+    meanings: [{pos:"n.", ar:"ساعة (حائط/مكتب)"}],
+    ex: "The clock on the wall shows three.", ex_ar: "الساعة على الحائط تُظهر الثالثة."
+  },
+  {
+    word: "close", level: "A1",
+    meanings: [{pos:"v.", ar:"يُغلق"}, {pos:"adj.", ar:"قريب / حميم"}, {pos:"n.", ar:"نهاية / ختام"}],
+    ex: "Please close the door behind you.", ex_ar: "أغلق الباب خلفك من فضلك."
+  },
+  {
+    word: "closed", level: "A2",
+    meanings: [{pos:"adj.", ar:"مُغلَق"}],
+    ex: "The shop is closed on Sundays.", ex_ar: "المتجر مُغلَق أيام الأحد."
+  },
+  {
+    word: "closely", level: "B2",
+    meanings: [{pos:"adv.", ar:"عن كثب / بإمعان"}],
+    ex: "Listen closely to what I say.", ex_ar: "استمع بإمعان لما أقوله."
+  },
+  {
+    word: "cloth", level: "B1",
+    meanings: [{pos:"n.", ar:"قماش / خرقة"}],
+    ex: "Wipe the table with a clean cloth.", ex_ar: "امسح الطاولة بقطعة قماش نظيفة."
+  },
+  {
+    word: "clothes", level: "A1",
+    meanings: [{pos:"n.", ar:"ملابس"}],
+    ex: "Don't forget to pack your clothes.", ex_ar: "لا تنسَ تعبئة ملابسك."
+  },
+  {
+    word: "clothing", level: "A2",
+    meanings: [{pos:"n.", ar:"ملبس / ملابس (عام)"}],
+    ex: "Warm clothing is needed in winter.", ex_ar: "تحتاج إلى ملابس دافئة في الشتاء."
+  },
+  {
+    word: "cloud", level: "A2",
+    meanings: [{pos:"n.", ar:"سحابة / غيمة"}],
+    ex: "Dark clouds mean rain is coming.", ex_ar: "الغيوم الداكنة تعني أن المطر قادم."
+  },
+  {
+    word: "club", level: "A1",
+    meanings: [{pos:"n.", ar:"نادٍ / فريق / هراوة"}],
+    ex: "She joined the school tennis club.", ex_ar: "انضمت إلى نادي التنس المدرسي."
+  },
+  {
+    word: "clue", level: "B1",
+    meanings: [{pos:"n.", ar:"دليل / تلميح"}],
+    ex: "The detective found an important clue.", ex_ar: "وجد المحقق دليلًا مهمًا."
+  },
+  {
+    word: "coach", level: "A2",
+    meanings: [{pos:"n.", ar:"مدرب / حافلة"}, {pos:"v.", ar:"يُدرِّب / يُرشد"}],
+    ex: "The coach trained the team every day.", ex_ar: "دَرَّب المدرب الفريق كل يوم."
+  },
+  {
+    word: "coal", level: "B1",
+    meanings: [{pos:"n.", ar:"فحم"}],
+    ex: "Coal was used to heat homes in winter.", ex_ar: "كان الفحم يُستخدم لتدفئة المنازل شتاءً."
+  },
+  {
+    word: "coast", level: "A2",
+    meanings: [{pos:"n.", ar:"ساحل"}],
+    ex: "They drove along the coast.", ex_ar: "قادوا على طول الساحل."
+  },
+  {
+    word: "coat", level: "A1",
+    meanings: [{pos:"n.", ar:"معطف / طبقة طلاء"}],
+    ex: "Wear your coat, it's cold outside.", ex_ar: "الببس معطفك، الجو بارد في الخارج."
+  },
+  {
+    word: "code", level: "A2",
+    meanings: [{pos:"n.", ar:"رمز / شيفرة / كود"}],
+    ex: "Enter the code to unlock the phone.", ex_ar: "أدخل الرمز لفتح قفل الهاتف."
+  },
+  {
+    word: "coffee", level: "A1",
+    meanings: [{pos:"n.", ar:"قهوة"}],
+    ex: "I drink two cups of coffee a day.", ex_ar: "أشرب كوبين من القهوة يوميًا."
+  },
+  {
+    word: "coin", level: "B1",
+    meanings: [{pos:"n.", ar:"عملة معدنية"}],
+    ex: "He found an old coin in the garden.", ex_ar: "وجد عملة قديمة في الحديقة."
+  },
+  {
+    word: "cold", level: "A1",
+    meanings: [{pos:"adj.", ar:"بارد"}, {pos:"n.", ar:"برد / زكام"}],
+    ex: "It's cold today; wear a jacket.", ex_ar: "الجو بارد اليوم؛ البس جاكيت."
+  },
+  {
+    word: "collapse", level: "B2",
+    meanings: [{pos:"v.", ar:"ينهار / يسقط"}, {pos:"n.", ar:"انهيار"}],
+    ex: "The old bridge collapsed in the storm.", ex_ar: "انهار الجسر القديم في العاصفة."
+  },
+  {
+    word: "colleague", level: "A2",
+    meanings: [{pos:"n.", ar:"زميل في العمل"}],
+    ex: "She introduced me to her colleagues.", ex_ar: "قدّمتني إلى زملائها في العمل."
+  },
+  {
+    word: "collect", level: "A2",
+    meanings: [{pos:"v.", ar:"يجمع / يتجمع"}],
+    ex: "He collects stamps from around the world.", ex_ar: "يجمع طوابع البريد من حول العالم."
+  },
+  {
+    word: "collection", level: "B1",
+    meanings: [{pos:"n.", ar:"مجموعة / تحصيل"}],
+    ex: "She has a large collection of books.", ex_ar: "لديها مجموعة كبيرة من الكتب."
+  },
+  {
+    word: "college", level: "A1",
+    meanings: [{pos:"n.", ar:"كلية / معهد"}],
+    ex: "He studies engineering at college.", ex_ar: "يدرس الهندسة في الكلية."
+  },
+  {
+    word: "colour", level: "A1",
+    meanings: [{pos:"n.", ar:"لون"}],
+    ex: "What is your favourite colour?", ex_ar: "ما هو لونك المفضل؟"
+  },
+  {
+    word: "coloured", level: "B1",
+    meanings: [{pos:"adj.", ar:"ملوَّن / ذو لون"}],
+    ex: "She drew with coloured pencils.", ex_ar: "رسمت بأقلام ملوّنة."
+  },
+  {
+    word: "column", level: "A2",
+    meanings: [{pos:"n.", ar:"عمود / خانة (جدول)"}],
+    ex: "Write your answers in the second column.", ex_ar: "اكتب إجاباتك في العمود الثاني."
+  },
+  {
+    word: "combination", level: "B2",
+    meanings: [{pos:"n.", ar:"تركيبة / مزيج"}],
+    ex: "The dish is a combination of spices.", ex_ar: "الطبق عبارة عن مزيج من التوابل."
+  },
+  {
+    word: "combine", level: "B1",
+    meanings: [{pos:"v.", ar:"يجمع / يدمج"}],
+    ex: "Combine flour and eggs to make pasta.", ex_ar: "اخلط الدقيق والبيض لصنع المعكرونة."
+  },
+  {
+    word: "come", level: "A1",
+    meanings: [{pos:"v.", ar:"يأتي / يجيء"}],
+    ex: "Come here, please.", ex_ar: "تعال إلى هنا من فضلك."
+  },
+  {
+    word: "comedy", level: "A2",
+    meanings: [{pos:"n.", ar:"كوميديا"}],
+    ex: "We watched a comedy film last night.", ex_ar: "شاهدنا فيلم كوميدي الليلة الماضية."
+  },
+  {
+    word: "comfort", level: "B2",
+    meanings: [{pos:"n.", ar:"راحة / تعزية"}, {pos:"v.", ar:"يُعزِّي / يُريح"}],
+    ex: "She sat in the comfort of her home.", ex_ar: "جلست في راحة منزلها."
+  },
+  {
+    word: "comfortable", level: "A2",
+    meanings: [{pos:"adj.", ar:"مريح"}],
+    ex: "This sofa is very comfortable.", ex_ar: "هذا الكنبة مريحة جدًا."
+  },
+  {
+    word: "command", level: "B2",
+    meanings: [{pos:"n.", ar:"أمر / قيادة"}, {pos:"v.", ar:"يأمر / يقود"}],
+    ex: "The general gave the command to attack.", ex_ar: "أصدر الجنرال أمرًا بالهجوم."
+  },
+  {
+    word: "comment", level: "A2",
+    meanings: [{pos:"n.", ar:"تعليق / ملاحظة"}, {pos:"v.", ar:"يُعلِّق"}],
+    ex: "Leave a comment under the post.", ex_ar: "اترك تعليقًا تحت المنشور."
+  },
+  {
+    word: "commercial", level: "B1",
+    meanings: [{pos:"adj.", ar:"تجاري"}, {pos:"n.", ar:"إعلان تجاري"}],
+    ex: "The product was a commercial success.", ex_ar: "كان المنتج نجاحًا تجاريًا."
+  },
+  {
+    word: "commission", level: "B2",
+    meanings: [{pos:"n.", ar:"عمولة / لجنة"}, {pos:"v.", ar:"يُكلِّف / يُفوِّض"}],
+    ex: "He earns a commission on every sale.", ex_ar: "يكسب عمولة على كل عملية بيع."
+  },
+  {
+    word: "commit", level: "B1",
+    meanings: [{pos:"v.", ar:"يرتكب / يلتزم"}],
+    ex: "He committed himself to the project.", ex_ar: "التزم بالمشروع."
+  },
+  {
+    word: "commitment", level: "B2",
+    meanings: [{pos:"n.", ar:"التزام / تعهد"}],
+    ex: "Success requires commitment and hard work.", ex_ar: "النجاح يتطلب التزامًا وعملًا جادًا."
+  },
+  {
+    word: "committee", level: "B2",
+    meanings: [{pos:"n.", ar:"لجنة"}],
+    ex: "The committee met to discuss the budget.", ex_ar: "اجتمعت اللجنة لمناقشة الميزانية."
+  },
+  {
+    word: "common", level: "A1",
+    meanings: [{pos:"adj.", ar:"شائع / مشترك"}, {pos:"n.", ar:"ساحة عامة"}],
+    ex: "It is common to shake hands in business.", ex_ar: "من الشائع المصافحة في الأعمال."
+  },
+  {
+    word: "commonly", level: "B2",
+    meanings: [{pos:"adv.", ar:"بشكل شائع / عادةً"}],
+    ex: "This word is commonly used in Arabic.", ex_ar: "هذه الكلمة تُستخدم بشكل شائع في العربية."
+  },
+  {
+    word: "communicate", level: "A2",
+    meanings: [{pos:"v.", ar:"يتواصل / يُبلِّغ"}],
+    ex: "It is important to communicate clearly.", ex_ar: "من المهم التواصل بوضوح."
+  },
+  {
+    word: "communication", level: "B1",
+    meanings: [{pos:"n.", ar:"تواصل / اتصالات"}],
+    ex: "Good communication is key to teamwork.", ex_ar: "التواصل الجيد أساس العمل الجماعي."
+  },
+  {
+    word: "community", level: "A2",
+    meanings: [{pos:"n.", ar:"مجتمع / جماعة"}],
+    ex: "The community helped after the flood.", ex_ar: "ساعد المجتمع بعد الفيضان."
+  },
+  {
+    word: "company", level: "A1",
+    meanings: [{pos:"n.", ar:"شركة / رفقة"}],
+    ex: "She started her own company.", ex_ar: "أسست شركتها الخاصة."
+  },
+  {
+    word: "compare", level: "A1",
+    meanings: [{pos:"v.", ar:"يُقارن"}],
+    ex: "Compare the prices before you buy.", ex_ar: "قارن الأسعار قبل الشراء."
+  },
+  {
+    word: "comparison", level: "B1",
+    meanings: [{pos:"n.", ar:"مقارنة"}],
+    ex: "In comparison, the first model is better.", ex_ar: "بالمقارنة، النموذج الأول أفضل."
+  },
+  {
+    word: "compete", level: "A2",
+    meanings: [{pos:"v.", ar:"يتنافس"}],
+    ex: "Many teams competed in the tournament.", ex_ar: "تنافست فرق كثيرة في البطولة."
+  },
+  {
+    word: "competition", level: "A2",
+    meanings: [{pos:"n.", ar:"منافسة / مسابقة"}],
+    ex: "She won the singing competition.", ex_ar: "فازت في مسابقة الغناء."
+  },
+  {
+    word: "competitive", level: "B1",
+    meanings: [{pos:"adj.", ar:"تنافسي / طموح"}],
+    ex: "The market is very competitive.", ex_ar: "السوق تنافسية جدًا."
+  },
+  {
+    word: "competitor", level: "B1",
+    meanings: [{pos:"n.", ar:"منافس / مشترك"}],
+    ex: "They studied their competitors carefully.", ex_ar: "درسوا منافسيهم بعناية."
+  },
+  {
+    word: "complain", level: "A2",
+    meanings: [{pos:"v.", ar:"يشكو / يتذمر"}],
+    ex: "He often complains about the weather.", ex_ar: "كثيرًا ما يشكو من الطقس."
+  },
+  {
+    word: "complaint", level: "B1",
+    meanings: [{pos:"n.", ar:"شكوى"}],
+    ex: "She made a complaint to the manager.", ex_ar: "قدّمت شكوى للمدير."
+  },
+  {
+    word: "complete", level: "A1",
+    meanings: [{pos:"adj.", ar:"كامل / مكتمل"}, {pos:"v.", ar:"يُكمِل / ينهي"}],
+    ex: "Please complete the form online.", ex_ar: "من فضلك أكمل النموذج عبر الإنترنت."
+  },
+  {
+    word: "completely", level: "A2",
+    meanings: [{pos:"adv.", ar:"تمامًا / كليًا"}],
+    ex: "I completely forgot about the meeting.", ex_ar: "نسيت الاجتماع تمامًا."
+  },
+  {
+    word: "complex", level: "B1",
+    meanings: [{pos:"adj.", ar:"معقد"}, {pos:"n.", ar:"مجمع / عقدة"}],
+    ex: "This problem is very complex.", ex_ar: "هذه المسألة معقدة جدًا."
+  },
+  {
+    word: "complicated", level: "B2",
+    meanings: [{pos:"adj.", ar:"معقد / متشعب"}],
+    ex: "The instructions were too complicated.", ex_ar: "التعليمات كانت معقدة للغاية."
+  },
+  {
+    word: "component", level: "B2",
+    meanings: [{pos:"n.", ar:"مكوِّن / جزء"}],
+    ex: "Exercise is a key component of health.", ex_ar: "التمرين مكوِّن أساسي للصحة."
+  },
+  {
+    word: "computer", level: "A1",
+    meanings: [{pos:"n.", ar:"حاسوب / كمبيوتر"}],
+    ex: "I do all my work on a computer.", ex_ar: "أنجز كل عملي على الحاسوب."
+  },
+  {
+    word: "concentrate", level: "B1",
+    meanings: [{pos:"v.", ar:"يُركِّز / يتركز"}],
+    ex: "It is hard to concentrate in a noisy room.", ex_ar: "من الصعب التركيز في غرفة صاخبة."
+  },
+  {
+    word: "concentration", level: "B2",
+    meanings: [{pos:"n.", ar:"تركيز / تركّز"}],
+    ex: "Reading improves your concentration.", ex_ar: "القراءة تُحسِّن تركيزك."
+  },
+  {
+    word: "concept", level: "B2",
+    meanings: [{pos:"n.", ar:"مفهوم / فكرة"}],
+    ex: "The concept of time is fascinating.", ex_ar: "مفهوم الوقت رائع."
+  },
+  {
+    word: "concern", level: "B2",
+    meanings: [{pos:"n.", ar:"قلق / اهتمام / شأن"}, {pos:"v.", ar:"يُقلق / يخص"}],
+    ex: "Her health is a major concern.", ex_ar: "صحتها مصدر قلق رئيسي."
+  },
+  {
+    word: "concerned", level: "B2",
+    meanings: [{pos:"adj.", ar:"قلق / معني"}],
+    ex: "He is concerned about his exam results.", ex_ar: "هو قلق بشأن نتائج امتحانه."
+  },
+  {
+    word: "concert", level: "A1",
+    meanings: [{pos:"n.", ar:"حفل موسيقي"}],
+    ex: "We went to a concert last Friday.", ex_ar: "ذهبنا إلى حفل موسيقي الجمعة الماضية."
+  },
+  {
+    word: "conclude", level: "B1",
+    meanings: [{pos:"v.", ar:"يستنتج / يختتم"}],
+    ex: "She concluded her speech with a poem.", ex_ar: "ختمت خطابها بقصيدة."
+  },
+  {
+    word: "conclusion", level: "B1",
+    meanings: [{pos:"n.", ar:"استنتاج / خاتمة"}],
+    ex: "What conclusion can we draw from this?", ex_ar: "ما الاستنتاج الذي يمكننا استخلاصه من هذا؟"
+  },
+  {
+    word: "condition", level: "A2",
+    meanings: [{pos:"n.", ar:"حالة / شرط / ظرف"}],
+    ex: "The car is in excellent condition.", ex_ar: "السيارة في حالة ممتازة."
+  },
+  {
+    word: "conduct", level: "B2",
+    meanings: [{pos:"v.", ar:"يُجري / يتصرف / يقود"}, {pos:"n.", ar:"سلوك / إجراء"}],
+    ex: "Scientists conduct experiments in the lab.", ex_ar: "يُجري العلماء تجارب في المختبر."
+  },
+  {
+    word: "conference", level: "A2",
+    meanings: [{pos:"n.", ar:"مؤتمر / اجتماع"}],
+    ex: "She attended an international conference.", ex_ar: "حضرت مؤتمرًا دوليًا."
+  },
+  {
+    word: "confidence", level: "B2",
+    meanings: [{pos:"n.", ar:"ثقة بالنفس / ثقة"}],
+    ex: "Practice builds confidence.", ex_ar: "التمرين يبني الثقة بالنفس."
+  },
+  {
+    word: "confident", level: "B1",
+    meanings: [{pos:"adj.", ar:"واثق / متأكد"}],
+    ex: "She felt confident before the interview.", ex_ar: "شعرت بالثقة قبل المقابلة."
+  },
+  {
+    word: "confirm", level: "B1",
+    meanings: [{pos:"v.", ar:"يُؤكِّد / يُثبِّت"}],
+    ex: "Please confirm your booking by email.", ex_ar: "يرجى تأكيد حجزك عبر البريد الإلكتروني."
+  },
+  {
+    word: "conflict", level: "B2",
+    meanings: [{pos:"n.", ar:"صراع / نزاع"}, {pos:"v.", ar:"يتعارض"}],
+    ex: "The two stories conflict with each other.", ex_ar: "القصتان تتعارضان مع بعضهما."
+  },
+  {
+    word: "confuse", level: "B1",
+    meanings: [{pos:"v.", ar:"يُربِك / يخلط"}],
+    ex: "The map confused him more.", ex_ar: "أربكته الخريطة أكثر."
+  },
+  {
+    word: "confused", level: "B1",
+    meanings: [{pos:"adj.", ar:"مرتبك / محتار"}],
+    ex: "I was confused by the question.", ex_ar: "أربكني السؤال."
+  },
+  {
+    word: "confusing", level: "B2",
+    meanings: [{pos:"adj.", ar:"مُربِك / غير واضح"}],
+    ex: "The instructions are really confusing.", ex_ar: "التعليمات مربكة فعلًا."
+  },
+  {
+    word: "connect", level: "A2",
+    meanings: [{pos:"v.", ar:"يوصل / يربط"}],
+    ex: "Connect the cable to the laptop.", ex_ar: "وصّل الكابل بالحاسوب المحمول."
+  },
+  {
+    word: "connected", level: "A2",
+    meanings: [{pos:"adj.", ar:"متصل / مرتبط"}],
+    ex: "Is the printer connected to the network?", ex_ar: "هل الطابعة متصلة بالشبكة؟"
+  },
+  {
+    word: "connection", level: "B1",
+    meanings: [{pos:"n.", ar:"اتصال / علاقة / رابط"}],
+    ex: "There is a strong connection between diet and health.", ex_ar: "هناك علاقة قوية بين النظام الغذائي والصحة."
+  },
+  {
+    word: "conscious", level: "B2",
+    meanings: [{pos:"adj.", ar:"واعٍ / مُدرِك"}],
+    ex: "She was conscious of the danger.", ex_ar: "كانت مدركة للخطر."
+  },
+  {
+    word: "consequence", level: "B1",
+    meanings: [{pos:"n.", ar:"نتيجة / عاقبة"}],
+    ex: "Think about the consequences of your actions.", ex_ar: "فكّر في عواقب أفعالك."
+  },
+  {
+    word: "conservative", level: "B2",
+    meanings: [{pos:"adj.", ar:"محافظ"}, {pos:"n.", ar:"شخص محافظ"}],
+    ex: "He has conservative views on education.", ex_ar: "لديه آراء محافظة في التعليم."
+  },
+  {
+    word: "consider", level: "A2",
+    meanings: [{pos:"v.", ar:"يعتبر / يأخذ بعين الاعتبار"}],
+    ex: "Consider all options before deciding.", ex_ar: "خذ كل الخيارات بعين الاعتبار قبل اتخاذ القرار."
+  },
+  {
+    word: "consideration", level: "B2",
+    meanings: [{pos:"n.", ar:"مراعاة / اعتبار / تفكير"}],
+    ex: "Cost is an important consideration.", ex_ar: "التكلفة اعتبار مهم."
+  },
+  {
+    word: "consist", level: "B1",
+    meanings: [{pos:"v.", ar:"يتكون من / يتألف من"}],
+    ex: "The team consists of ten players.", ex_ar: "يتكون الفريق من عشرة لاعبين."
+  },
+  {
+    word: "consistent", level: "B2",
+    meanings: [{pos:"adj.", ar:"متسق / ثابت / منتظم"}],
+    ex: "You need to be consistent in your efforts.", ex_ar: "تحتاج إلى الاتساق في جهودك."
+  },
+  {
+    word: "constant", level: "B2",
+    meanings: [{pos:"adj.", ar:"مستمر / دائم / ثابت"}],
+    ex: "There is a constant noise from the street.", ex_ar: "هناك ضجيج مستمر من الشارع."
+  },
+  {
+    word: "constantly", level: "B2",
+    meanings: [{pos:"adv.", ar:"باستمرار / دائمًا"}],
+    ex: "She constantly checks her phone.", ex_ar: "تتفقد هاتفها باستمرار."
+  },
+  {
+    word: "construct", level: "B2",
+    meanings: [{pos:"v.", ar:"يبني / يُشيِّد"}],
+    ex: "They will construct a new bridge.", ex_ar: "سيشيّدون جسرًا جديدًا."
+  },
+  {
+    word: "construction", level: "B2",
+    meanings: [{pos:"n.", ar:"بناء / إنشاء"}],
+    ex: "The construction of the tower took two years.", ex_ar: "استغرق بناء البرج عامين."
+  },
+  {
+    word: "consume", level: "B1",
+    meanings: [{pos:"v.", ar:"يستهلك / يلتهم"}],
+    ex: "Cars consume a lot of fuel.", ex_ar: "تستهلك السيارات الكثير من الوقود."
+  },
+  {
+    word: "consumer", level: "B1",
+    meanings: [{pos:"n.", ar:"مستهلك"}],
+    ex: "Consumers want cheaper products.", ex_ar: "يريد المستهلكون منتجات أرخص."
+  },
+  {
+    word: "contact", level: "B1",
+    meanings: [{pos:"n.", ar:"تواصل / اتصال / جهة اتصال"}, {pos:"v.", ar:"يتواصل مع"}],
+    ex: "Contact me if you need help.", ex_ar: "تواصل معي إن احتجت مساعدة."
+  },
+  {
+    word: "contain", level: "A2",
+    meanings: [{pos:"v.", ar:"يحتوي على / يتضمن"}],
+    ex: "This juice contains no sugar.", ex_ar: "هذا العصير لا يحتوي على سكر."
+  },
+  {
+    word: "container", level: "B1",
+    meanings: [{pos:"n.", ar:"حاوية / وعاء"}],
+    ex: "Store leftovers in a sealed container.", ex_ar: "احفظ بقايا الطعام في حاوية مغلقة."
+  },
+  {
+    word: "contemporary", level: "B2",
+    meanings: [{pos:"adj.", ar:"معاصر / حديث"}],
+    ex: "She studies contemporary art.", ex_ar: "تدرس الفن المعاصر."
+  },
+  {
+    word: "content", level: "B1",
+    meanings: [{pos:"n.", ar:"محتوى / مضمون"}],
+    ex: "The content of the video was funny.", ex_ar: "محتوى الفيديو كان مضحكًا."
+  },
+  {
+    word: "contest", level: "B2",
+    meanings: [{pos:"n.", ar:"مسابقة / منافسة"}, {pos:"v.", ar:"ينافس / يطعن في"}],
+    ex: "She entered a writing contest.", ex_ar: "شاركت في مسابقة كتابة."
+  },
+  {
+    word: "context", level: "A2",
+    meanings: [{pos:"n.", ar:"سياق / محيط"}],
+    ex: "Read the word in context to understand it.", ex_ar: "اقرأ الكلمة في سياقها لفهمها."
+  },
+  {
+    word: "continent", level: "A2",
+    meanings: [{pos:"n.", ar:"قارة"}],
+    ex: "Africa is the second-largest continent.", ex_ar: "أفريقيا هي ثاني أكبر قارة."
+  },
+  {
+    word: "continue", level: "A2",
+    meanings: [{pos:"v.", ar:"يستمر / يواصل"}],
+    ex: "Please continue with your story.", ex_ar: "من فضلك واصل قصتك."
+  },
+  {
+    word: "continuous", level: "B1",
+    meanings: [{pos:"adj.", ar:"متواصل / مستمر"}],
+    ex: "There was continuous rain for a week.", ex_ar: "هطل مطر متواصل لمدة أسبوع."
+  },
+  {
+    word: "contract", level: "B2",
+    meanings: [{pos:"n.", ar:"عقد"}, {pos:"v.", ar:"يتعاقد / ينكمش"}],
+    ex: "Sign the contract before starting work.", ex_ar: "وقّع العقد قبل البدء بالعمل."
+  },
+  {
+    word: "contrast", level: "B1",
+    meanings: [{pos:"n.", ar:"تباين / تناقض"}, {pos:"v.", ar:"يتناقض"}],
+    ex: "In contrast, the second approach is simpler.", ex_ar: "في المقابل، الأسلوب الثاني أبسط."
+  },
+  {
+    word: "contribute", level: "B2",
+    meanings: [{pos:"v.", ar:"يُساهم / يُسهم"}],
+    ex: "Everyone can contribute to the project.", ex_ar: "يمكن للجميع المساهمة في المشروع."
+  },
+  {
+    word: "contribution", level: "B2",
+    meanings: [{pos:"n.", ar:"مساهمة / إسهام"}],
+    ex: "She made a great contribution to science.", ex_ar: "قدّمت إسهامًا عظيمًا في العلوم."
+  },
+  {
+    word: "control", level: "A2",
+    meanings: [{pos:"n.", ar:"سيطرة / تحكم"}, {pos:"v.", ar:"يتحكم / يسيطر"}],
+    ex: "Keep your emotions under control.", ex_ar: "تحكّم في مشاعرك."
+  },
+  {
+    word: "convenient", level: "B1",
+    meanings: [{pos:"adj.", ar:"مناسب / مريح / ملائم"}],
+    ex: "The hotel is in a convenient location.", ex_ar: "الفندق في موقع مناسب."
+  },
+  {
+    word: "conversation", level: "A1",
+    meanings: [{pos:"n.", ar:"محادثة / حوار"}],
+    ex: "We had a good conversation over dinner.", ex_ar: "أجرينا محادثة رائعة على العشاء."
+  },
+  {
+    word: "convert", level: "B2",
+    meanings: [{pos:"v.", ar:"يُحوِّل / يتحوّل"}],
+    ex: "Convert the file to PDF format.", ex_ar: "حوّل الملف إلى صيغة PDF."
+  },
+  {
+    word: "convince", level: "B1",
+    meanings: [{pos:"v.", ar:"يُقنع"}],
+    ex: "She convinced him to try the new dish.", ex_ar: "أقنعته بتجربة الطبق الجديد."
+  },
+  {
+    word: "convinced", level: "B2",
+    meanings: [{pos:"adj.", ar:"مقتنع / متأكد"}],
+    ex: "I am convinced this is the right decision.", ex_ar: "أنا مقتنع أن هذا هو القرار الصحيح."
+  },
+  {
+    word: "cook", level: "A1",
+    meanings: [{pos:"v.", ar:"يطبخ"}, {pos:"n.", ar:"طباخ"}],
+    ex: "She loves to cook Italian food.", ex_ar: "تحب طبخ الطعام الإيطالي."
+  },
+  {
+    word: "cooker", level: "A2",
+    meanings: [{pos:"n.", ar:"طباخة / موقد"}],
+    ex: "The cooker in the kitchen is broken.", ex_ar: "الطباخة في المطبخ معطّلة."
+  },
+  {
+    word: "cooking", level: "A1",
+    meanings: [{pos:"n.", ar:"طبخ / طهي"}],
+    ex: "Cooking at home saves money.", ex_ar: "الطبخ في المنزل يوفّر المال."
+  },
+  {
+    word: "cool", level: "A1",
+    meanings: [{pos:"adj.", ar:"بارد / رائع"}, {pos:"v.", ar:"يُبرِّد"}],
+    ex: "It's cool in the evening here.", ex_ar: "الجو بارد في المساء هنا."
+  },
+  {
+    word: "copy", level: "A2",
+    meanings: [{pos:"n.", ar:"نسخة"}, {pos:"v.", ar:"ينسخ / يُقلِّد"}],
+    ex: "Please make a copy of this document.", ex_ar: "من فضلك اصنع نسخة من هذه الوثيقة."
+  },
+  {
+    word: "core", level: "B2",
+    meanings: [{pos:"n.", ar:"جوهر / نواة"}, {pos:"adj.", ar:"أساسي / جوهري"}],
+    ex: "Exercise is core to staying healthy.", ex_ar: "الرياضة أساس الحفاظ على الصحة."
+  },
+  {
+    word: "corner", level: "A2",
+    meanings: [{pos:"n.", ar:"زاوية / ركن"}],
+    ex: "The cafe is on the corner of the street.", ex_ar: "المقهى في ركن الشارع."
+  },
+  {
+    word: "corporate", level: "B2",
+    meanings: [{pos:"adj.", ar:"مؤسسي / شركاتي"}],
+    ex: "He works in the corporate sector.", ex_ar: "يعمل في القطاع المؤسسي."
+  },
+  {
+    word: "correct", level: "A1",
+    meanings: [{pos:"adj.", ar:"صحيح / سليم"}, {pos:"v.", ar:"يُصحِّح"}],
+    ex: "Is this the correct answer?", ex_ar: "هل هذه الإجابة الصحيحة؟"
+  },
+  {
+    word: "correctly", level: "A2",
+    meanings: [{pos:"adv.", ar:"بشكل صحيح"}],
+    ex: "Spell the word correctly.", ex_ar: "هجّئ الكلمة بشكل صحيح."
+  },
+  {
+    word: "cost", level: "A1",
+    meanings: [{pos:"n.", ar:"تكلفة / ثمن"}, {pos:"v.", ar:"يكلّف"}],
+    ex: "How much does this cost?", ex_ar: "بكم هذا؟"
+  },
+  {
+    word: "costume", level: "B1",
+    meanings: [{pos:"n.", ar:"زيّ / ملابس تنكرية"}],
+    ex: "She wore a traditional costume.", ex_ar: "ارتدت زيًا تقليديًا."
+  },
+  {
+    word: "cottage", level: "B1",
+    meanings: [{pos:"n.", ar:"كوخ / بيت ريفي صغير"}],
+    ex: "They rented a cottage by the sea.", ex_ar: "استأجروا كوخًا بجانب البحر."
+  },
+  {
+    word: "cotton", level: "B1",
+    meanings: [{pos:"n.", ar:"قطن"}],
+    ex: "This shirt is made of pure cotton.", ex_ar: "هذا القميص مصنوع من القطن الخالص."
+  },
+  {
+    word: "could", level: "A1",
+    meanings: [{pos:"modal v.", ar:"كان بإمكانه / يستطيع (مؤدب)"}],
+    ex: "Could you help me, please?", ex_ar: "هل يمكنك مساعدتي من فضلك؟"
+  },
+  {
+    word: "council", level: "B2",
+    meanings: [{pos:"n.", ar:"مجلس / هيئة"}],
+    ex: "The city council approved the plan.", ex_ar: "وافق مجلس المدينة على الخطة."
+  },
+  {
+    word: "count", level: "A2",
+    meanings: [{pos:"v.", ar:"يعدّ / يهم"}, {pos:"n.", ar:"عدد / عدّ"}],
+    ex: "Count the apples in the basket.", ex_ar: "عُدَّ التفاح في السلة."
+  },
+  {
+    word: "country", level: "A1",
+    meanings: [{pos:"n.", ar:"بلد / دولة / ريف"}],
+    ex: "Which country do you come from?", ex_ar: "من أي بلد أنت؟"
+  },
+  {
+    word: "countryside", level: "B1",
+    meanings: [{pos:"n.", ar:"ريف / بادية"}],
+    ex: "I love walking in the countryside.", ex_ar: "أحب المشي في الريف."
+  },
+  {
+    word: "county", level: "B2",
+    meanings: [{pos:"n.", ar:"مقاطعة / محافظة"}],
+    ex: "She lives in a small county in Ireland.", ex_ar: "تعيش في مقاطعة صغيرة في أيرلندا."
+  },
+  {
+    word: "couple", level: "A2",
+    meanings: [{pos:"n.", ar:"زوجان / بضعة"}],
+    ex: "They have been a couple for five years.", ex_ar: "هما زوجان منذ خمس سنوات."
+  },
+  {
+    word: "courage", level: "B2",
+    meanings: [{pos:"n.", ar:"شجاعة / جرأة"}],
+    ex: "It takes courage to speak in public.", ex_ar: "يتطلب الأمر شجاعة للتحدث أمام الجمهور."
+  },
+  {
+    word: "course", level: "A1",
+    meanings: [{pos:"n.", ar:"دورة / مسار / مادة دراسية"}],
+    ex: "She is taking an online English course.", ex_ar: "إنها تأخذ دورة إنجليزية عبر الإنترنت."
+  },
+  {
+    word: "court", level: "B1",
+    meanings: [{pos:"n.", ar:"محكمة / ملعب"}],
+    ex: "The case was decided in court.", ex_ar: "حُسمت القضية في المحكمة."
+  },
+  {
+    word: "cousin", level: "A1",
+    meanings: [{pos:"n.", ar:"ابن عم / ابن خال / ابن عمة / ابن خالة"}],
+    ex: "My cousin lives in Dubai.", ex_ar: "ابن عمي يعيش في دبي."
+  },
+  {
+    word: "cover", level: "A2",
+    meanings: [{pos:"v.", ar:"يُغطي / يشمل"}, {pos:"n.", ar:"غطاء / غلاف"}],
+    ex: "The book cover is very colourful.", ex_ar: "غلاف الكتاب ملوّن جدًا."
+  },
+  {
+    word: "covered", level: "B1",
+    meanings: [{pos:"adj.", ar:"مُغطّى"}],
+    ex: "The mountains were covered with snow.", ex_ar: "كانت الجبال مُغطّاة بالثلج."
+  },
+  {
+    word: "cow", level: "A1",
+    meanings: [{pos:"n.", ar:"بقرة"}],
+    ex: "The cow is grazing in the field.", ex_ar: "البقرة ترعى في الحقل."
+  },
+  {
+    word: "crash", level: "B2",
+    meanings: [{pos:"n.", ar:"تحطم / اصطدام"}, {pos:"v.", ar:"يتحطم / يصطدم"}],
+    ex: "There was a car crash on the highway.", ex_ar: "حدث حادث سير على الطريق السريع."
+  },
+  {
+    word: "crazy", level: "A2",
+    meanings: [{pos:"adj.", ar:"مجنون / متهور"}],
+    ex: "That is a crazy idea!", ex_ar: "تلك فكرة مجنونة!"
+  },
+  {
+    word: "cream", level: "A1",
+    meanings: [{pos:"n.", ar:"كريمة / كريم (بشرة)"}, {pos:"adj.", ar:"كريمي اللون"}],
+    ex: "Add cream to the soup for richness.", ex_ar: "أضف الكريمة للحساء لجعله أكثر ثراءً."
+  },
+  {
+    word: "create", level: "A1",
+    meanings: [{pos:"v.", ar:"يخلق / يُنشئ / يصنع"}],
+    ex: "She created a beautiful painting.", ex_ar: "أبدعت لوحة جميلة."
+  },
+  {
+    word: "creation", level: "B2",
+    meanings: [{pos:"n.", ar:"خلق / إبداع / مخلوق"}],
+    ex: "The creation of the website took a month.", ex_ar: "استغرق إنشاء الموقع شهرًا."
+  },
+  {
+    word: "creative", level: "A2",
+    meanings: [{pos:"adj.", ar:"مبدع / خلّاق"}],
+    ex: "She is very creative with colours.", ex_ar: "هي مبدعة جدًا في استخدام الألوان."
+  },
+  {
+    word: "creature", level: "B2",
+    meanings: [{pos:"n.", ar:"مخلوق / كائن حي"}],
+    ex: "The sea is full of amazing creatures.", ex_ar: "البحر مليء بمخلوقات رائعة."
+  },
+  {
+    word: "credit", level: "A2",
+    meanings: [{pos:"n.", ar:"ائتمان / رصيد / فضل"}, {pos:"v.", ar:"يُضيف للرصيد / يعزو الفضل"}],
+    ex: "Pay by credit card or cash.", ex_ar: "ادفع ببطاقة الائتمان أو نقدًا."
+  },
+  {
+    word: "crew", level: "B2",
+    meanings: [{pos:"n.", ar:"طاقم (عمل/سفينة/طائرة)"}],
+    ex: "The flight crew welcomed the passengers.", ex_ar: "رحّب طاقم الرحلة بالمسافرين."
+  },
+  {
+    word: "crime", level: "A2",
+    meanings: [{pos:"n.", ar:"جريمة"}],
+    ex: "Crime rates have dropped this year.", ex_ar: "انخفضت معدلات الجريمة هذا العام."
+  },
+  {
+    word: "criminal", level: "A2",
+    meanings: [{pos:"n.", ar:"مجرم"}, {pos:"adj.", ar:"جنائي / إجرامي"}],
+    ex: "The criminal was arrested by the police.", ex_ar: "اعتُقل المجرم من قِبَل الشرطة."
+  },
+  {
+    word: "crisis", level: "B2",
+    meanings: [{pos:"n.", ar:"أزمة"}],
+    ex: "The country faced an economic crisis.", ex_ar: "واجه البلد أزمة اقتصادية."
+  },
+  {
+    word: "criterion", level: "B2",
+    meanings: [{pos:"n.", ar:"معيار / مقياس"}],
+    ex: "Price is not the only criterion.", ex_ar: "السعر ليس المعيار الوحيد."
+  },
+  {
+    word: "critic", level: "B2",
+    meanings: [{pos:"n.", ar:"ناقد / منتقد"}],
+    ex: "The film received mixed reviews from critics.", ex_ar: "حصل الفيلم على آراء متباينة من النقاد."
+  },
+  {
+    word: "critical", level: "B2",
+    meanings: [{pos:"adj.", ar:"بالغ الأهمية / نقدي / حرج"}],
+    ex: "This is a critical moment in the project.", ex_ar: "هذه لحظة بالغة الأهمية في المشروع."
+  },
+  {
+    word: "criticism", level: "B2",
+    meanings: [{pos:"n.", ar:"انتقاد / نقد"}],
+    ex: "He accepted the criticism gracefully.", ex_ar: "قَبِل الانتقاد بلطف."
+  },
+  {
+    word: "criticize", level: "B2",
+    meanings: [{pos:"v.", ar:"ينتقد"}],
+    ex: "Don't criticize others without reason.", ex_ar: "لا تنتقد الآخرين بلا سبب."
+  },
+  {
+    word: "crop", level: "B2",
+    meanings: [{pos:"n.", ar:"محصول / حاصل زراعي"}],
+    ex: "Wheat is the main crop in this region.", ex_ar: "القمح هو المحصول الرئيسي في هذه المنطقة."
+  },
+  {
+    word: "cross", level: "A2",
+    meanings: [{pos:"v.", ar:"يعبر / يتقاطع"}, {pos:"n.", ar:"صليب / تقاطع"}],
+    ex: "Cross the street at the traffic lights.", ex_ar: "اعبر الشارع عند إشارات المرور."
+  },
+  {
+    word: "crowd", level: "A2",
+    meanings: [{pos:"n.", ar:"حشد / جمهور"}],
+    ex: "A large crowd gathered in the square.", ex_ar: "تجمّع حشد كبير في الساحة."
+  },
+  {
+    word: "crowded", level: "A2",
+    meanings: [{pos:"adj.", ar:"مكتظ / مزدحم"}],
+    ex: "The bus was very crowded.", ex_ar: "كانت الحافلة مكتظة جدًا."
+  },
+  {
+    word: "crucial", level: "B2",
+    meanings: [{pos:"adj.", ar:"بالغ الأهمية / حيوي / حاسم"}],
+    ex: "Sleep is crucial for good health.", ex_ar: "النوم بالغ الأهمية لصحة جيدة."
+  },
+  {
+    word: "cruel", level: "B1",
+    meanings: [{pos:"adj.", ar:"قاسٍ / وحشي"}],
+    ex: "It is cruel to hurt animals.", ex_ar: "إيذاء الحيوانات أمر قاسٍ."
+  },
+  {
+    word: "cry", level: "A2",
+    meanings: [{pos:"v.", ar:"يبكي / يصرخ"}, {pos:"n.", ar:"بكاء / صرخة"}],
+    ex: "The baby cried all night.", ex_ar: "بكى الطفل طوال الليل."
+  },
+  {
+    word: "cultural", level: "B1",
+    meanings: [{pos:"adj.", ar:"ثقافي"}],
+    ex: "They respect each other's cultural differences.", ex_ar: "يحترمون الاختلافات الثقافية لبعضهم البعض."
+  },
+  {
+    word: "culture", level: "A1",
+    meanings: [{pos:"n.", ar:"ثقافة / حضارة"}],
+    ex: "Arabic culture is rich and diverse.", ex_ar: "الثقافة العربية غنية ومتنوعة."
+  },
+  {
+    word: "cup", level: "A1",
+    meanings: [{pos:"n.", ar:"كوب / كأس"}],
+    ex: "Would you like a cup of tea?", ex_ar: "هل تريد كوبًا من الشاي؟"
+  },
+  {
+    word: "cupboard", level: "A2",
+    meanings: [{pos:"n.", ar:"خزانة (مطبخ/غرفة)"}],
+    ex: "The cups are in the cupboard.", ex_ar: "الأكواب في الخزانة."
+  },
+  {
+    word: "cure", level: "B2",
+    meanings: [{pos:"v.", ar:"يشفي / يعالج"}, {pos:"n.", ar:"علاج / شفاء"}],
+    ex: "Doctors are looking for a cure for the disease.", ex_ar: "يبحث الأطباء عن علاج للمرض."
+  },
+  {
+    word: "curly", level: "A2",
+    meanings: [{pos:"adj.", ar:"مجعّد / ملتوٍ"}],
+    ex: "She has long, curly hair.", ex_ar: "لديها شعر طويل مجعّد."
+  },
+  {
+    word: "currency", level: "B1",
+    meanings: [{pos:"n.", ar:"عملة"}],
+    ex: "The local currency is the euro.", ex_ar: "العملة المحلية هي اليورو."
+  },
+  {
+    word: "current", level: "B1",
+    meanings: [{pos:"adj.", ar:"حالي / الآن"}, {pos:"n.", ar:"تيار (مائي/كهربائي)"}],
+    ex: "What is the current price of oil?", ex_ar: "ما هو السعر الحالي للنفط؟"
+  },
+  {
+    word: "currently", level: "B1",
+    meanings: [{pos:"adv.", ar:"حاليًا / في الوقت الراهن"}],
+    ex: "She is currently studying in London.", ex_ar: "إنها تدرس حاليًا في لندن."
+  },
+  {
+    word: "curtain", level: "B1",
+    meanings: [{pos:"n.", ar:"ستارة"}],
+    ex: "Open the curtains and let in some light.", ex_ar: "افتح الستائر واسمح لبعض الضوء بالدخول."
+  },
+  {
+    word: "curve", level: "B2",
+    meanings: [{pos:"n.", ar:"منحنى"}, {pos:"v.", ar:"ينحني"}],
+    ex: "The road has a sharp curve ahead.", ex_ar: "الطريق فيه منحنى حاد أمامك."
+  },
+  {
+    word: "curved", level: "B2",
+    meanings: [{pos:"adj.", ar:"منحني / مقوّس"}],
+    ex: "The bridge has a curved design.", ex_ar: "الجسر له تصميم منحنٍ."
+  },
+  {
+    word: "custom", level: "B1",
+    meanings: [{pos:"n.", ar:"عادة / تقليد / جمارك"}],
+    ex: "It is a local custom to bring food as a gift.", ex_ar: "من العادات المحلية إحضار الطعام هدية."
+  },
+  {
+    word: "customer", level: "A1",
+    meanings: [{pos:"n.", ar:"زبون / عميل"}],
+    ex: "The customer is always right.", ex_ar: "الزبون دائمًا على حق."
+  },
+  {
+    word: "cut", level: "A1",
+    meanings: [{pos:"v.", ar:"يقطع / يُخفِّض"}, {pos:"n.", ar:"قطع / جرح"}],
+    ex: "Cut the vegetables into small pieces.", ex_ar: "قطّع الخضروات إلى قطع صغيرة."
+  },
+  {
+    word: "cycle", level: "A2",
+    meanings: [{pos:"n.", ar:"دورة / دراجة"}, {pos:"v.", ar:"يركب الدراجة"}],
+    ex: "She cycles to school every day.", ex_ar: "تركب الدراجة إلى المدرسة كل يوم."
+  }
+];
+
+let currentLevel = 'all';
+let currentSearch = '';
+
+function getLevel(word) {
+  // dominant level
+  return word.level;
+}
+
+function renderCards(list) {
+  const grid = document.getElementById('grid');
+  const counter = document.getElementById('counter');
+  grid.innerHTML = '';
+  counter.textContent = `يُعرض ${list.length} كلمة من أصل ${words.length}`;
+
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="no-results">لا توجد نتائج مطابقة 🔍</div>';
+    return;
+  }
+
+  list.forEach((w, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.level = w.level;
+    card.style.animationDelay = (i % 20) * 0.035 + 's';
+
+    const meaningsHtml = w.meanings.map(m => `
+      <div class="meaning-row">
+        <span class="translation">${m.ar}</span>
+        <span class="pos-tag">${m.pos}</span>
+      </div>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="word-en">${w.word}</span>
+        <span class="level-badge badge-${w.level}">${w.level}</span>
+      </div>
+      <div class="card-body">
+        <div class="meanings">${meaningsHtml}</div>
+        <div class="divider"></div>
+        <div class="example-label">مثال</div>
+        <div class="example">${w.ex}</div>
+        <div class="example-ar">${w.ex_ar}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function filterCards() {
+  currentSearch = document.getElementById('searchInput').value.toLowerCase().trim();
+  applyFilters();
+}
+
+function filterLevel(level, btn) {
+  currentLevel = level;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  let filtered = words;
+  if (currentLevel !== 'all') {
+    filtered = filtered.filter(w => w.level === currentLevel);
+  }
+  if (currentSearch) {
+    filtered = filtered.filter(w =>
+      w.word.toLowerCase().includes(currentSearch) ||
+      w.meanings.some(m => m.ar.includes(currentSearch)) ||
+      w.ex.toLowerCase().includes(currentSearch)
+    );
+  }
+  renderCards(filtered);
+}
+
+// Init
+renderCards(words);
+</script>
+</body>
+  </html>
