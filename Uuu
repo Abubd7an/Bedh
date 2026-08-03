@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>NVQ Unit 10 — Supporting Evidence Checklist</title>
+<style>
+  @page { margin: 14mm 12mm; }
+
+  :root{
+    --ink:#1c2b2e;
+    --paper:#f6f3ec;
+    --line:#c9c0ac;
+    --brass:#8a6d3b;
+    --brass-dark:#5f4a24;
+    --available:#3c6e47;
+    --available-bg:#e7f0e6;
+    --missing:#a13d2f;
+    --missing-bg:#f5e6e1;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Segoe UI","Tahoma",sans-serif;
+    line-height:1.55;
+  }
+
+  header.doc-head{
+    padding:34px 6vw 22px;
+    border-bottom:3px double var(--brass);
+    background:
+      repeating-linear-gradient(135deg, rgba(138,109,59,0.05) 0 2px, transparent 2px 14px),
+      var(--paper);
+  }
+  header.doc-head .eyebrow{
+    font-size:12.5px;
+    letter-spacing:.12em;
+    color:var(--brass-dark);
+    text-transform:uppercase;
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  header.doc-head h1{
+    margin:0 0 6px;
+    font-size:28px;
+    font-weight:800;
+  }
+  header.doc-head p.sub{
+    margin:0;
+    color:#4b5a55;
+    font-size:14.5px;
+    max-width:62ch;
+  }
+
+  .toolbar{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    padding:14px 6vw;
+    background:#efe9db;
+    border-bottom:1px solid var(--line);
+    position:sticky;
+    top:0;
+    z-index:5;
+  }
+  .toolbar .progress-wrap{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .progress-track{
+    flex:1;
+    height:8px;
+    background:#ddd4bd;
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--available);
+    transition:width .25s ease;
+  }
+  #progressLabel{ font-size:13px; white-space:nowrap; color:#4b5a55; }
+  button.act{
+    border:1px solid var(--brass);
+    background:#fff;
+    color:var(--brass-dark);
+    padding:8px 14px;
+    font-size:13px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  button.act:hover{ background:var(--brass); color:#fff; }
+  button.print-btn{
+    background:var(--brass-dark);
+    color:#fff;
+    border-color:var(--brass-dark);
+  }
+  button.print-btn:hover{ background:var(--ink); border-color:var(--ink); }
+
+  main{ padding:8px 6vw 60px; max-width:900px; margin:0 auto; }
+
+  .lo-block{ margin-top:34px; }
+  .lo-block:first-child{ margin-top:24px; }
+
+  .lo-heading{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:8px;
+    margin-bottom:16px;
+  }
+  .lo-tag{
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:.05em;
+    background:var(--ink);
+    color:var(--paper);
+    padding:4px 10px;
+    border-radius:4px;
+  }
+  .lo-heading h2{
+    margin:0;
+    font-size:20px;
+  }
+
+  .ac-card{
+    background:#fffdf8;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:18px 20px;
+    margin-bottom:18px;
+    box-shadow:0 1px 0 rgba(0,0,0,.03);
+  }
+  .ac-card h3{
+    margin:0 0 8px;
+    font-size:15.5px;
+    color:var(--brass-dark);
+  }
+  .ac-card .desc{
+    font-size:13.5px;
+    color:#3c4a45;
+    margin:0 0 10px;
+  }
+  .criteria{
+    margin:0 0 12px;
+    padding-inline-start:20px;
+    font-size:13px;
+    color:#55625d;
+  }
+  .criteria li{ margin-bottom:2px; }
+
+  .evidence-title{
+    font-size:12.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:#7a7157;
+    margin:0 0 8px;
+    border-top:1px dashed var(--line);
+    padding-top:10px;
+  }
+
+  .ev-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:7px 8px;
+    border-radius:6px;
+    font-size:13.5px;
+  }
+  .ev-row:hover{ background:#f2eee2; }
+
+  .ev-row .status-toggle{
+    display:flex;
+    gap:4px;
+    flex-shrink:0;
+  }
+  .status-toggle button{
+    border:1px solid var(--line);
+    background:#fff;
+    font-size:11px;
+    padding:4px 9px;
+    border-radius:5px;
+    cursor:pointer;
+    color:#666;
+    font-weight:600;
+  }
+  .status-toggle button.yes.on{
+    background:var(--available-bg);
+    border-color:var(--available);
+    color:var(--available);
+  }
+  .status-toggle button.no.on{
+    background:var(--missing-bg);
+    border-color:var(--missing);
+    color:var(--missing);
+  }
+  .ev-row .ev-text{ flex:1; }
+  .ev-row.state-yes .ev-text{ color:var(--available); }
+  .ev-row.state-no .ev-text{ color:var(--missing); }
+  .ev-row.state-yes{ background:var(--available-bg); }
+  .ev-row.state-no{ background:var(--missing-bg); }
+
+  .notes-line{ margin-top:6px; }
+  .notes-line input{
+    width:100%;
+    border:none;
+    border-bottom:1px dotted var(--line);
+    background:transparent;
+    font-size:12.5px;
+    padding:4px 2px;
+    font-family:inherit;
+    color:var(--ink);
+  }
+  .notes-line input:focus{ outline:none; border-bottom-color:var(--brass); }
+
+  footer.doc-foot{
+    text-align:center;
+    font-size:11.5px;
+    color:#8a8474;
+    padding:20px 6vw 40px;
+  }
+
+  @media print{
+    .toolbar{ display:none; }
+    body{ background:#fff; }
+    header.doc-head{ background:none; }
+    .ac-card{ box-shadow:none; break-inside:avoid; }
+    .status-toggle button{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .ev-row.state-yes, .ev-row.state-no{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .status-toggle button.no{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="doc-head">
+  <div class="eyebrow">NVQ &nbsp;•&nbsp; Unit 10</div>
+  <h1>Supporting Evidence Checklist</h1>
+  <p class="sub">Organised by Learning Outcome (LO) and Assessment Criteria (AC), with examples of the supporting evidence required for each. Mark whether you already hold each piece of evidence, then print the checklist for your records or submission.</p>
+</header>
+
+<div class="toolbar">
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span id="progressLabel">0 / 0 evidence items available</span>
+  </div>
+  <button class="act" onclick="resetAll()">Reset</button>
+  <button class="act print-btn" onclick="window.print()">Print</button>
+</div>
+
+<main id="main"></main>
+
+<footer class="doc-foot">NVQ Unit 10 — Supporting Evidence Guidance</footer>
+
+<script>
+const data = [
+  {
+    lo: "LO1",
+    items: [
+      {
+        code: "AC1.1",
+        title: "Contribute to your organisational requirements in relation to controlling work quantities and costs",
+        desc: "This task relates to contributing to your organisational requirements in relation to controlling quantity and costs.",
+        criteria: [],
+        evidence: [
+          "A Bill of Quantities (BoQ)",
+          "Cost reports and budget monitoring sheets",
+          "A cost value reconciliation (CVR) report",
+          "Material requisition forms and stock control records",
+          "Variation orders and change control logs",
+          "Timesheets and labour allocation records",
+          "Procurement schedules and supplier comparison documents"
+        ]
+      }
+    ]
+  },
+  {
+    lo: "LO2",
+    items: [
+      {
+        code: "AC2.1",
+        title: "Collate and record work quantities and cost data",
+        desc: "This task relates to collating and recording work quantities and cost data in relation to at least three of the following:",
+        criteria: [
+          "Materials",
+          "Plant, machinery and equipment",
+          "Workforce",
+          "Sub-contractors",
+          "Recorded works",
+          "Programme and schedules"
+        ],
+        evidence: [
+          "Material take-off sheets, delivery notes, and material usage records",
+          "Material cost reports and invoices",
+          "A materials reconciliation report",
+          "A plant hire register or plant allocation sheet",
+          "Plant utilisation reports and hire invoices",
+          "Timesheets, labour allocation records, and payroll summaries",
+          "Sub-contractor applications for payment, valuation certificates, and sub-contract agreements",
+          "A site diary or daily progress report",
+          "A construction programme, lookahead schedules, and progress tracking reports"
+        ]
+      },
+      {
+        code: "AC2.2",
+        title: "Evaluate and report work quantities and cost data to relevant people following organisational procedures",
+        desc: "This task relates to evaluating and reporting work quantities and cost data to relevant people following organisational procedures.",
+        criteria: [],
+        evidence: [
+          "A Cost Value Reconciliation (CVR) report",
+          "Cost reports and budget tracking sheets",
+          "Progress reports and valuation reports",
+          "Site diaries and measurement records",
+          "Sub-contractor valuation certificates and applications for payment",
+          "Programme reports and lookahead schedules",
+          "Monthly progress reports, commercial reports, and site review meetings"
+        ]
+      }
+    ]
+  },
+  {
+    lo: "LO3",
+    items: [
+      {
+        code: "AC3.1",
+        title: "Identify and record at least two opportunities for cost savings",
+        desc: "This task relates to identifying and recording at least two of the following opportunities for cost savings:",
+        criteria: [
+          "Waste reduction",
+          "Resource management and logistics",
+          "Applications of new technologies and materials",
+          "Energy and utility management",
+          "Receipt and use of materials",
+          "Alternative sources and types of materials",
+          "Alternative suppliers of labour, materials and equipment",
+          "Document control and record keeping",
+          "Alternative methods of work"
+        ],
+        evidence: [
+          "A Site Waste Management Plan (SWMP) and waste reports",
+          "A site logistics plan and material usage reports",
+          "Supplier comparison sheets and procurement evaluation reports",
+          "Value engineering reports and method statement reviews",
+          "Energy usage reports and temporary services monitoring logs",
+          "Cost-saving reports, commercial summaries, or project review documents"
+        ]
+      },
+      {
+        code: "AC3.2",
+        title: "Communicate and report the suggested cost savings to the relevant people responsible",
+        desc: "This task relates to communicating and reporting the suggested cost savings to the relevant people responsible.",
+        criteria: [],
+        evidence: [
+          "A cost-saving proposal report or value engineering report",
+          "Commercial reports and Cost Value Reconciliation (CVR) reports",
+          "Site meeting minutes and progress meeting records",
+          "Procurement review documents and supplier comparison reports"
+        ]
+      }
+    ]
+  },
+  {
+    lo: "LO4",
+    items: [
+      {
+        code: "AC4.1",
+        title: "Examine relevant work activities to identify variations in quantities and costs",
+        desc: "This task relates to examining relevant work activities to identify variations in quantities and costs.",
+        criteria: [],
+        evidence: [
+          "A Bill of Quantities (BoQ)",
+          "Cost Value Reconciliation (CVR) reports",
+          "Site diaries and daily progress reports",
+          "Sub-contractor valuation reports and applications for payment",
+          "Programme reports and lookahead schedules",
+          "Variation orders, change control logs, or early warning notices"
+        ]
+      },
+      {
+        code: "AC4.2",
+        title: "Investigate any variations to work cost or quantities, record the outcomes and implement the appropriate corrective actions",
+        desc: "This task relates to investigating any variations to work cost or quantities, recording the outcomes and implementing the appropriate corrective actions in relation to one of the following:",
+        criteria: [
+          "Restore progress in accordance with agreed programme",
+          "Agree new completion date(s)",
+          "Identify potential variation",
+          "Secure additional resource(s)",
+          "Alter planned work"
+        ],
+        evidence: [
+          "Cost Value Reconciliation (CVR) reports, progress reports, and measurement records",
+          "Variation report, early warning notice (EWN), or change control log",
+          "A revised programme or recovery programme",
+          "Labour requisition forms, plant hire requests, or procurement orders",
+          "Updated method statements and risk assessments",
+          "Commercial reports, progress reports, or project review documents"
+        ]
+      },
+      {
+        code: "AC4.3",
+        title: "Agree the corrective actions with the people responsible",
+        desc: "This task relates to agreeing the corrective actions with the people responsible.",
+        criteria: [],
+        evidence: [
+          "Site meeting minutes (e.g. progress meetings or commercial review meetings)",
+          "Change control forms or variation approval forms",
+          "A revised programme or recovery programme",
+          "Resource allocation plans, labour requisition forms, or plant hire approvals",
+          "Updated method statements and risk assessments",
+          "Progress reports or commercial reports"
+        ]
+      }
+    ]
+  }
+];
+
+const main = document.getElementById('main');
+let evCounter = 0;
+
+data.forEach(loGroup => {
+  const loBlock = document.createElement('section');
+  loBlock.className = 'lo-block';
+
+  const heading = document.createElement('div');
+  heading.className = 'lo-heading';
+  heading.innerHTML = `<span class="lo-tag">${loGroup.lo}</span><h2>Learning Outcome ${loGroup.lo.replace('LO','')}</h2>`;
+  loBlock.appendChild(heading);
+
+  loGroup.items.forEach(ac => {
+    const card = document.createElement('div');
+    card.className = 'ac-card';
+
+    let html = `<h3>${ac.code} — ${ac.title}</h3><p class="desc">${ac.desc}</p>`;
+    if(ac.criteria.length){
+      html += '<ul class="criteria">' + ac.criteria.map(c => `<li>${c}</li>`).join('') + '</ul>';
+    }
+    html += '<div class="evidence-title">Examples of supporting evidence</div>';
+    card.innerHTML = html;
+
+    ac.evidence.forEach(text => {
+      evCounter++;
+      const id = 'ev' + evCounter;
+      const row = document.createElement('div');
+      row.className = 'ev-row';
+      row.dataset.id = id;
+      row.innerHTML = `
+        <div class="status-toggle">
+          <button class="yes" data-state="yes" title="Evidence available">Available</button>
+          <button class="no" data-state="no" title="Evidence missing">Missing</button>
+        </div>
+        <span class="ev-text">${text}</span>
+      `;
+      card.appendChild(row);
+    });
+
+    const notesLine = document.createElement('div');
+    notesLine.className = 'notes-line';
+    notesLine.innerHTML = `<input type="text" placeholder="Notes or reference to where the evidence is stored...">`;
+    card.appendChild(notesLine);
+
+    loBlock.appendChild(card);
+  });
+
+  main.appendChild(loBlock);
+});
+
+function updateProgress(){
+  const rows = document.querySelectorAll('.ev-row');
+  const yes = document.querySelectorAll('.ev-row.state-yes').length;
+  const total = rows.length;
+  const pct = total ? Math.round((yes/total)*100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `${yes} / ${total} evidence items available`;
+}
+
+main.addEventListener('click', (e) => {
+  const btn = e.target.closest('.status-toggle button');
+  if(!btn) return;
+  const row = btn.closest('.ev-row');
+  const state = btn.dataset.state;
+  const currentlyOn = btn.classList.contains('on');
+
+  row.querySelectorAll('.status-toggle button').forEach(b => b.classList.remove('on'));
+  row.classList.remove('state-yes','state-no');
+
+  if(!currentlyOn){
+    btn.classList.add('on');
+    row.classList.add(state === 'yes' ? 'state-yes' : 'state-no');
+  }
+  updateProgress();
+});
+
+function resetAll(){
+  document.querySelectorAll('.status-toggle button').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.ev-row').forEach(r => r.classList.remove('state-yes','state-no'));
+  document.querySelectorAll('.notes-line input').forEach(i => i.value = '');
+  updateProgress();
+}
+
+updateProgress();
+</script>
+
+</body>
+</html>
